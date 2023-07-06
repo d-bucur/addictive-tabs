@@ -36,6 +36,7 @@ export async function getManifest() {
     },
     permissions: [
       'tabs',
+      'bookmarks',
       'storage',
       'activeTab',
     ],

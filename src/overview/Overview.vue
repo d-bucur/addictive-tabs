@@ -7,7 +7,14 @@ async function getCurrentTabs() {
   })
 }
 
-onMounted(() => console.log(getCurrentTabs()))
+async function getBookmarks() {
+  return await browser.bookmarks.getSubTree('98')
+}
+
+onMounted(() => {
+  console.log(getCurrentTabs())
+  console.log(getBookmarks())
+})
 </script>
 
 <template>
