@@ -42,7 +42,7 @@ export async function getManifest() {
       'activeTab',
     ],
     host_permissions: ['*://*/*'],
-    content_scripts: [
+    content_scripts: [ // TODO remove content scripts
       {
         matches: [
           '<all_urls>',

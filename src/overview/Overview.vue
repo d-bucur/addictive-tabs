@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { Bookmarks } from 'webextension-polyfill'
 import type { Tabs } from 'webextension-polyfill/namespaces/tabs'
+import type { ListOfTabs, TabItem } from '~/composables/utils'
+import { faviconURL } from '~/composables/utils'
 
 async function getCurrentTabs() {
   const v = await browser.tabs.query({
@@ -18,35 +21,32 @@ function updateTabList() {
   })
 }
 
-const bookmarks = ref([])
-async function getBookmarks() {
-  return await browser.bookmarks.getSubTree('5')
-}
-function updateBookmarksList() {
-  getBookmarks().then((t) => {
-    bookmarks.value = t[0].children?.map(t => ({
-      id: t.id,
-      title: t.title,
-      url: t.url,
-      favIconUrl: faviconURL(t.url),
-    }))
-  })
+function bookmarkMapper(bm: Bookmarks.BookmarkTreeNode): TabItem {
+  return {
+    id: bm.id,
+    title: bm.title,
+    url: bm.url,
+    favIconUrl: faviconURL(bm.url),
+  }
 }
 
-function faviconURL(u: string | undefined): string {
-  if (!u)
-    return ''
-  const url = new URL(browser.runtime.getURL('/_favicon/'))
-  url.searchParams.set('pageUrl', u)
-  url.searchParams.set('size', '32')
-  return url.toString()
+const BOOKMARK_TREE_ID = '1'
+const bookmarkTree = ref([]) as Ref<Array<ListOfTabs>>
+async function fillBookmarkTree() {
+  const subTree = await browser.bookmarks.getSubTree(BOOKMARK_TREE_ID)
+  bookmarkTree.value = subTree[0].children?.map(s => ({
+    id: s.id,
+    children: s.children?.map(bookmarkMapper),
+    title: s.title,
+  })) // TODO handle edge cases
 }
 
 onMounted(async () => {
   updateTabList()
   browser.tabs.onCreated.addListener(_t => updateTabList())
   browser.tabs.onRemoved.addListener(_t => updateTabList())
-  updateBookmarksList()
+  // updateBookmarksList()
+  await fillBookmarkTree()
   console.log(browser.bookmarks.getTree())
 })
 </script>
@@ -55,7 +55,8 @@ onMounted(async () => {
   <main class="px-4 py-10 text-center text-gray-700 dark:text-gray-200">
     <div flex>
       <TabList :items="currentTabs" name="Open tabs" />
-      <TabList :items="bookmarks" name="Bookmarks" />
+      <TabList v-for="bm in bookmarkTree" :key="bm.id" :items="bm.children" :name="bm.title" />
+      <div />
     </div>
   </main>
 </template>

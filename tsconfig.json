@@ -11,7 +11,7 @@
     "jsx": "preserve",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
     "types": [
       "vite/client"
