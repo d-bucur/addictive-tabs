@@ -4,6 +4,10 @@ import { storageDemo } from '~/logic/storage'
 function openOptionsPage() {
   browser.runtime.openOptionsPage()
 }
+
+function openOverviewPage() {
+  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
+}
 </script>
 
 <template>
@@ -13,7 +17,10 @@ function openOptionsPage() {
     <SharedSubtitle />
 
     <button class="btn mt-2" @click="openOptionsPage">
-      Open Options
+      Options
+    </button>
+    <button class="btn mt-2" @click="openOverviewPage">
+      Overview
     </button>
     <div class="mt-2">
       <span class="opacity-50">Storage:</span> {{ storageDemo }}
