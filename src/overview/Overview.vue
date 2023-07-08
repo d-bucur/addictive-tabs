@@ -10,10 +10,13 @@ const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBo
 
 async function refreshGroups() {
   // TODO perf check if this renders multiple times. if so, use buffer
+  // TODO more efficient rendering. don't clear every time but only update as necessary
+  // TODO there can be a race condition here when triggered by multiple tabs (ie restoring a window)
+  console.log('Starting refreshGroups')
   tabsGroups.value = {}
-  await refreshActiveWindows()
   await refreshBookmarks()
-  console.log('Groups', tabsGroups.value)
+  await refreshActiveWindows()
+  console.log('Ended refreshGroups', tabsGroups.value)
 }
 
 function groupsAddTab(key: string, tab: TabItem, title?: string) {
@@ -32,18 +35,41 @@ async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
   tabsRes.forEach((tab) => {
     const tabItem = convertTab(tab)
-    const winId = tab.windowId?.toString() || 'undefined'
-    groupsAddTab(winId, tabItem) // might happen in some edge cases?
+    const winId = tab.windowId?.toString() || 'undefined' // might happen in some edge cases?
+    const boundBmId = bindings.windowToBookmark[winId]
+    let title = null // logic for bookmark title is kind of ugly
+    if (boundBmId) {
+      // console.log('Window bound to bm', tabsGroups.value[boundBmId])
+      if (tabsGroups.value[boundBmId])
+        title = tabsGroups.value[boundBmId].title
+      delete tabsGroups.value[boundBmId]
+    }
+    groupsAddTab(winId, tabItem)
+    if (title)
+      tabsGroups.value[winId].title = title
     tabsGroups.value[winId].windowId = winId
   })
+  refreshBindReferences()
   console.log('API tabs', tabsRes)
+}
+
+function refreshBindReferences() {
+  for (const winId of Object.keys(bindings.windowToBookmark)) {
+    if (!tabsGroups.value[winId]) {
+      delete bindings.windowToBookmark[winId]
+      continue
+      // this will not be persisted until next save
+    }
+    // console.log('Updating binding for winId', winId)
+    tabsGroups.value[winId].bookmarkId = bindings.windowToBookmark[winId]
+  }
 }
 
 function convertTab(tab: Tabs.Tab): TabItem {
   return {
     id: tab.id?.toString() || 'undefined', // might happen in some edge cases?
-    title: tab.title || 'undefined', // should never happen
-    url: tab.url || 'undefined', // should never happen
+    title: tab.title!,
+    url: tab.url!,
     favIconUrl: tab.favIconUrl,
   }
 }
@@ -67,7 +93,7 @@ function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
   return {
     id: bm.id,
     title: bm.title,
-    url: bm.url || 'undefined', // should never happen
+    url: bm.url!,
     favIconUrl: faviconURL(bm.url),
   }
 }
@@ -90,6 +116,7 @@ async function handleBind(groupId: string) {
     title: groupId,
   })
   bindings.windowToBookmark[groupId] = bmFolder.id
+  saveState()
   tabsGroups.value[groupId].bookmarkId = bmFolder.id
 }
 
@@ -107,12 +134,51 @@ async function handlePersist(groupId: string) {
   }))
 }
 
+async function handleRestore(groupId: string) {
+  const window = await browser.windows.create({
+    url: tabsGroups.value[groupId].tabs.map(t => t.url),
+  })
+  const winId = window.id!.toString()
+  bindings.windowToBookmark[winId] = tabsGroups.value[groupId].bookmarkId!
+  saveState()
+  refreshGroups()
+}
+
+function handleUnbind(groupId: string) {
+  delete bindings.windowToBookmark[groupId]
+  saveState()
+  refreshGroups()
+}
+
+function saveState() {
+  console.log('Saving state')
+  localStorage.setItem('windowToBookmark', JSON.stringify(bindings.windowToBookmark))
+}
+
+function loadState() {
+  const loaded = localStorage.getItem('windowToBookmark')
+  if (loaded)
+    bindings.windowToBookmark = JSON.parse(loaded)
+    // console.log('Found state, loading')
+}
+
 onMounted(async () => {
+  loadState()
   await refreshGroups()
-  // TODO handle updates better
-  browser.tabs.onCreated.addListener(_t => refreshGroups())
-  browser.tabs.onRemoved.addListener(_t => refreshGroups())
+  window.addEventListener('beforeunload', _event => cleanup())
+  // TODO handle updates better, check for race conditions
+  // browser.tabs.onCreated.addListener(_t => refreshGroups())
+  // browser.tabs.onRemoved.addListener(_t => refreshGroups())
 })
+
+onUnmounted(() => {
+  cleanup()
+})
+
+function cleanup() {
+  console.log('Unmounting, saving state')
+  saveState()
+}
 </script>
 
 <template>
@@ -121,10 +187,11 @@ onMounted(async () => {
       <TabList
         v-for="k in groupKeysIterator" :id="k"
         :key="k"
-        :items="tabsGroups.value[k].tabs"
-        :name="tabsGroups.value[k].title"
+        :group-data="tabsGroups.value[k]"
         @bind="handleBind"
         @persist="handlePersist"
+        @restore="handleRestore"
+        @unbind="handleUnbind"
       />
       <div />
     </div>

@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 devDependencies:
   '@antfu/eslint-config':
     specifier: ^0.36.0
@@ -28,6 +32,9 @@ devDependencies:
   '@unocss/reset':
     specifier: ^0.51.12
     version: 0.51.12
+  '@unocss/transformer-directives':
+    specifier: ^0.53.5
+    version: 0.53.5
   '@vitejs/plugin-vue':
     specifier: ^4.2.1
     version: 4.2.1(vite@4.3.5)(vue@3.2.47)
@@ -1047,6 +1054,10 @@ packages:
     resolution: {integrity: sha512-H8mLy6ZKu9nGZe5jlHhLPIVwh2G3cCDSBGl5aIZJFI1qpmDC+Zb3iueBGigNpX75IzkjaGKZiK1WUWq8TShjtA==}
     dev: true
 
+  /@unocss/core@0.53.5:
+    resolution: {integrity: sha512-jBvk4FeUAALAomGfMFFmrXLy01/5DjugdnWgawFAQpSToFTxbMHS7x+pXKu/18cq+YLS8uyl9S0Ywy1jNbfS3Q==}
+    dev: true
+
   /@unocss/extractor-arbitrary-variants@0.51.12:
     resolution: {integrity: sha512-/HJH48LbnzTzPkq7yNf+F8tpq7F8b0ibuv0Y/PFQdRN+5OBpRoVwzK7pnJccpiOFbWqlfIQ/ao0MgVc+321tUw==}
     dependencies:
@@ -1162,6 +1173,13 @@ packages:
     resolution: {integrity: sha512-xC1s7BQ2KwiLv2ChsvszELnQYo9DXOpunCkZerjZJm8ptCQJ3D+Zo1HM1C+asc4L4tIZ7BATzhQRGGlpsd37fw==}
     dependencies:
       '@unocss/core': 0.51.12
+      css-tree: 2.3.1
+    dev: true
+
+  /@unocss/transformer-directives@0.53.5:
+    resolution: {integrity: sha512-u1OIZZUAXux9Q0mb58X3infxY2Iq6pY7uJB7IhMc2I1ntpyx875spwyvvfUHqOgIPTNR4XxfxKFGPHpjPNbNeQ==}
+    dependencies:
+      '@unocss/core': 0.53.5
       css-tree: 2.3.1
     dev: true
 
