@@ -1,4 +1,3 @@
-- group structure: group composed of tabs
 - merge existing groups and fill bindings
 - bind: button to create binding for open windows
 - sync: button to manual sync between bindings

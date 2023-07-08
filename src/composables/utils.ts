@@ -1,14 +1,28 @@
 export interface TabItem {
-  id?: number | string
-  title?: string
-  url?: string
+  id: string
+  title: string
+  url: string
   favIconUrl?: string
 }
 
+// TODO old, remove
 export interface ListOfTabs {
   id: number | string
   children: Array<TabItem>
   title: string
+}
+
+export interface Group {
+  title: string
+  windowId?: string
+  bookmarkId?: string
+  tabs: Array<TabItem>
+}
+
+// export type Groups = Dictionary<Group>
+
+export interface Dictionary<T> {
+  [Key: string]: T
 }
 
 export function faviconURL(u: string | undefined): string {
