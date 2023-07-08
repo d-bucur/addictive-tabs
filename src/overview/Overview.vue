@@ -33,7 +33,7 @@ function groupsAddTab(key: string, tab: TabItem, title?: string) {
 
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
-  tabsRes.forEach((tab) => {
+  for (const tab of tabsRes) {
     const tabItem = convertTab(tab)
     const winId = tab.windowId?.toString() || 'undefined' // might happen in some edge cases?
     const boundBmId = bindings.windowToBookmark[winId]
@@ -48,13 +48,13 @@ async function refreshActiveWindows() {
     if (title)
       tabsGroups.value[winId].title = title
     tabsGroups.value[winId].windowId = winId
-  })
+  }
   refreshBindReferences()
   console.log('API tabs', tabsRes)
 }
 
 function refreshBindReferences() {
-  for (const winId of Object.keys(bindings.windowToBookmark)) {
+  for (const winId in bindings.windowToBookmark) {
     if (!tabsGroups.value[winId]) {
       delete bindings.windowToBookmark[winId]
       continue
@@ -101,11 +101,11 @@ function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
 const groupKeysIterator = computed(() => {
   const windows: string[] = []
   const bms: string[] = []
-  Object.keys(tabsGroups.value).forEach((k) => {
+  for (const k in tabsGroups.value) {
     if (tabsGroups.value[k].windowId)
       windows.push(k)
     else bms.push(k)
-  })
+  }
   return windows.concat(bms)
 })
 
@@ -127,11 +127,13 @@ async function handlePersist(groupId: string) {
   console.log('Removing', currentBookmarks)
   currentBookmarks[0].children?.forEach(bm => browser.bookmarks.remove(bm.id))
 
-  tabsGroups.value[groupId].tabs.forEach(tab => browser.bookmarks.create({
-    title: tab.title,
-    url: tab.url,
-    parentId: bmFolder,
-  }))
+  for (const tab of tabsGroups.value[groupId].tabs) {
+    browser.bookmarks.create({
+      title: tab.title,
+      url: tab.url,
+      parentId: bmFolder,
+    })
+  }
 }
 
 async function handleRestore(groupId: string) {

@@ -6,6 +6,7 @@
 - extract list into component and try it in popup
 - bindings do not persist between browser reloads as windows change ids
 
+- ignore extension tabs and maybe others as well
 - better reactive updates on changes
 - change root bm folder and edge cases
 - drag & drop functionality
