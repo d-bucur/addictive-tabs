@@ -1,4 +1,3 @@
-- merge existing groups and fill bindings
 - bind: button to create binding for open windows
 - sync: button to manual sync between bindings
 - restore: open window from bookmark and bind
