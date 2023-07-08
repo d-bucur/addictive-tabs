@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Bookmarks } from 'webextension-polyfill'
-import type { Tabs } from 'webextension-polyfill/namespaces/tabs'
+import { type Bookmarks } from 'webextension-polyfill'
 import type { ListOfTabs, TabItem } from '~/composables/utils'
 import { faviconURL } from '~/composables/utils'
 
@@ -12,13 +11,29 @@ async function getCurrentTabs() {
 }
 
 // TODO better to use reactive or ref?
-const currentTabs: Tabs.Tab[] = reactive([])
+// const currentTabs: Tabs.Tab[] = reactive([])
 
-function updateTabList() {
-  getCurrentTabs().then((t) => {
-    currentTabs.length = 0
-    currentTabs.push(...t)
+// function updateTabList() {
+//   getCurrentTabs().then((t) => {
+//     currentTabs.length = 0
+//     currentTabs.push(...t)
+//   })
+// }
+
+const tabsByWindow = reactive({ value: {} })
+async function fillActiveTabs() {
+  tabsByWindow.value = {}
+  const tabs = await browser.tabs.query({})
+  tabs.forEach((t) => {
+    if (!tabsByWindow.value[t.windowId]) {
+      tabsByWindow.value[t.windowId] = {
+        title: t.windowId,
+        children: [],
+      }
+    }
+    tabsByWindow.value[t.windowId].children.push(t)
   })
+  console.log('Active tabs', tabsByWindow.value)
 }
 
 function bookmarkMapper(bm: Bookmarks.BookmarkTreeNode): TabItem {
@@ -42,9 +57,9 @@ async function fillBookmarkTree() {
 }
 
 onMounted(async () => {
-  updateTabList()
-  browser.tabs.onCreated.addListener(_t => updateTabList())
-  browser.tabs.onRemoved.addListener(_t => updateTabList())
+  await fillActiveTabs()
+  browser.tabs.onCreated.addListener(_t => fillActiveTabs())
+  browser.tabs.onRemoved.addListener(_t => fillActiveTabs())
   // updateBookmarksList()
   await fillBookmarkTree()
   console.log(browser.bookmarks.getTree())
@@ -54,7 +69,11 @@ onMounted(async () => {
 <template>
   <main class="px-4 py-10 text-center text-gray-700 dark:text-gray-200">
     <div flex>
-      <TabList :items="currentTabs" name="Open tabs" />
+      <TabList
+        v-for="t in Object.keys(tabsByWindow.value)" :key="t"
+        :items="tabsByWindow.value[t].children"
+        :name="tabsByWindow.value[t].title"
+      />
       <TabList v-for="bm in bookmarkTree" :key="bm.id" :items="bm.children" :name="bm.title" />
       <div />
     </div>

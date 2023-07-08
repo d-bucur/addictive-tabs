@@ -1,0 +1,10 @@
+- group structure: group composed of tabs
+- merge existing groups and fill bindings
+- bind: button to create binding for open windows
+- sync: button to manual sync between bindings
+- restore: open window from bookmark and bind
+- archive: bind + sync + close
+- move ownership of groups to background script
+- persist bindings between browser reloads (is localStorage enough?)
+- auto sync (needs details)
+- change root bm folder and edge cases
