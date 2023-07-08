@@ -5,13 +5,6 @@ export interface TabItem {
   favIconUrl?: string
 }
 
-// TODO old, remove
-export interface ListOfTabs {
-  id: number | string
-  children: Array<TabItem>
-  title: string
-}
-
 export interface Group {
   title: string
   windowId?: string

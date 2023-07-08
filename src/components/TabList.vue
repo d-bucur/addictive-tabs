@@ -1,25 +1,14 @@
 <script setup lang="ts">
 import type { TabItem } from '~/composables/utils'
 
+// TODO use typed props and emits
 const props = defineProps({
   name: String,
   items: Array<TabItem>,
+  id: String,
 })
 
-const OUTPUT_ID = '19'
-
-async function persist() {
-  console.log('Persisting')
-  const currentBookmarks = await browser.bookmarks.getSubTree(OUTPUT_ID)
-  console.log('Existing', currentBookmarks)
-  currentBookmarks[0].children?.forEach(bm => browser.bookmarks.remove(bm.id))
-
-  props.items?.forEach(item => browser.bookmarks.create({
-    title: item.title,
-    url: item.url,
-    parentId: OUTPUT_ID, // output tree
-  }))
-}
+const emit = defineEmits(['bind', 'persist'])
 
 onUpdated(() => console.log(props.items))
 </script>
@@ -29,7 +18,10 @@ onUpdated(() => console.log(props.items))
     <div text-lg bg-blue-2>
       {{ name }}
     </div>
-    <button @click="persist">
+    <button @click="emit('bind', id)">
+      Bind
+    </button>
+    <button @click="emit('persist', id)">
       Persist
     </button>
     <ul>

@@ -5,6 +5,8 @@ import { faviconURL } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
+// TODO binding is also duplicated inside groups. refactor this later
+const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
 
 async function refreshGroups() {
   // TODO perf check if this renders multiple times. if so, use buffer
@@ -81,6 +83,30 @@ const groupKeysIterator = computed(() => {
   return windows.concat(bms)
 })
 
+async function handleBind(groupId: string) {
+  // console.log(`Binding ${groupId}`)
+  const bmFolder = await browser.bookmarks.create({
+    parentId: BOOKMARK_TREE_ID,
+    title: groupId,
+  })
+  bindings.windowToBookmark[groupId] = bmFolder.id
+  tabsGroups.value[groupId].bookmarkId = bmFolder.id
+}
+
+async function handlePersist(groupId: string) {
+  console.log('Persisting')
+  const bmFolder = bindings.windowToBookmark[groupId]
+  const currentBookmarks = await browser.bookmarks.getSubTree(bmFolder)
+  console.log('Removing', currentBookmarks)
+  currentBookmarks[0].children?.forEach(bm => browser.bookmarks.remove(bm.id))
+
+  tabsGroups.value[groupId].tabs.forEach(tab => browser.bookmarks.create({
+    title: tab.title,
+    url: tab.url,
+    parentId: bmFolder,
+  }))
+}
+
 onMounted(async () => {
   await refreshGroups()
   // TODO handle updates better
@@ -93,9 +119,12 @@ onMounted(async () => {
   <main class="px-4 py-10 text-center text-gray-700 dark:text-gray-200">
     <div flex>
       <TabList
-        v-for="k in groupKeysIterator" :key="k"
+        v-for="k in groupKeysIterator" :id="k"
+        :key="k"
         :items="tabsGroups.value[k].tabs"
         :name="tabsGroups.value[k].title"
+        @bind="handleBind"
+        @persist="handlePersist"
       />
       <div />
     </div>
