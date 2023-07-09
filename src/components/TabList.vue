@@ -16,7 +16,11 @@ onMounted(() => console.log('Updating list', props.groupData))
 </script>
 
 <template>
-  <div flex flex-col self-start border-rounded w-xs bg-coolgray-50 dark:bg-coolgray-800 overflow-hidden shadow-md>
+  <div
+    class="tab-group-card"
+    flex flex-col self-start border-rounded w-xs max-h-100 grow
+    bg-coolgray-50 dark:bg-coolgray-800 shadow-md
+  >
     <div
       text-lg bg-coolgray-200 dark:bg-gray-900
       :class="{ 'win-titlebar': isWindow, 'bound-titlebar': isBounded }"
@@ -40,7 +44,7 @@ onMounted(() => console.log('Updating list', props.groupData))
         Restore
       </button>
     </div>
-    <ul p-2>
+    <ul p-2 overflow-auto>
       <li v-for="item in groupData.tabs" :key="item.id" flex flex-content-start p-1>
         <img :src="item.favIconUrl" w-5 h-5 m-r2 border-rounded border-coolGray-2>
         <div :title="item.url" text-nowrap text-left overflow-hidden>

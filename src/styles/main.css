@@ -1,10 +1,14 @@
+:root {
+  --app-min-width: 700px; /* not really used any more */
+}
+
 html,
 body,
 #app {
   margin: 0;
   padding: 0;
   @apply bg-coolgray-100 dark:bg-coolgray-700 dark:text-white;
-  min-width: 700px;
+  min-width: var(--app-min-width);
   min-height: 600px;
 }
 

@@ -21,6 +21,9 @@ export async function getManifest() {
       page: './dist/options/index.html',
       open_in_tab: true,
     },
+    side_panel: {
+      default_path: './dist/overview/index.html',
+    },
     background: isFirefox
       ? {
           scripts: ['dist/background/index.mjs'],
@@ -36,6 +39,7 @@ export async function getManifest() {
     },
     permissions: [
       'favicon',
+      'sidePanel',
       'tabs',
       'bookmarks',
       'storage',

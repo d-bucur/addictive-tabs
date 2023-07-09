@@ -179,7 +179,29 @@ function loadState() {
     // console.log('Found state, loading')
 }
 
+function getViewType(): string {
+  const popups = browser.extension.getViews({ type: 'popup' })
+  if (popups[0] && popups[0].innerWidth === window.innerWidth && popups[0].innerHeight === window.innerHeight)
+    return 'popup'
+  // TODO might return wrong type if multiple tabs opened with different sizes
+  const tabs = browser.extension.getViews({ type: 'tab' })
+  if (tabs[0] && tabs[0].innerWidth === window.innerWidth && tabs[0].innerHeight === window.innerHeight)
+    return 'tab'
+  return 'sidebar'
+}
+
+async function handleEntrypoint() {
+  // sidebar entry, query params not possible in manifest
+  if (getViewType() === 'sidebar') {
+    console.log('loading other style')
+    document.getElementsByTagName('head')[0].insertAdjacentHTML(
+      'beforeend',
+      '<link rel="stylesheet" href="../background/override.css" />')
+  }
+}
+
 onMounted(async () => {
+  await handleEntrypoint()
   loadState()
   await refreshGroups()
   window.addEventListener('beforeunload', _event => cleanup())

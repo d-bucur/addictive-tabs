@@ -93,6 +93,7 @@ export default defineConfig(({ command }) => ({
       ? {}
       : undefined,
     outDir: r('extension/dist'),
+    publicDir: 'src/public',
     emptyOutDir: false,
     sourcemap: isDev ? 'inline' : false,
     // https://developer.chrome.com/docs/webstore/program_policies/#:~:text=Code%20Readability%20Requirements

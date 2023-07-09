@@ -1,0 +1,9 @@
+/* overrides for sidebar */
+
+:root {
+  --app-min-width: 1px !important;
+}
+
+.tab-group-card {
+  width: 100%;
+}
