@@ -19,5 +19,8 @@
 - add sidebar view?
 - group emoticon?
 
+- hover over item to see address
+- toggle mode that shows address under tab titles
+
 - masonry grid for groups
 - unocss isn't that great, maybe remove it

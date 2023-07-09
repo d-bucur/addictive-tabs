@@ -3,7 +3,7 @@ import { presetAttributify, presetIcons, presetUno, transformerDirectives } from
 
 export default defineConfig({
   presets: [
-    presetUno(),
+    presetUno({ dark: 'media' }),
     presetAttributify(),
     presetIcons(),
   ],

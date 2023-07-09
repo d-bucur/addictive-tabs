@@ -16,9 +16,9 @@ onMounted(() => console.log('Updating list', props.groupData))
 </script>
 
 <template>
-  <div flex flex-col self-start border-rounded w-xs bg-coolgray-50 overflow-hidden shadow-md>
+  <div flex flex-col self-start border-rounded w-xs bg-coolgray-50 dark:bg-coolgray-800 overflow-hidden shadow-md>
     <div
-      text-lg bg-coolgray-200
+      text-lg bg-coolgray-200 dark:bg-gray-900
       :class="{ 'win-titlebar': isWindow, 'bound-titlebar': isBounded }"
     >
       {{ groupData.title }}
@@ -53,9 +53,9 @@ onMounted(() => console.log('Updating list', props.groupData))
 
 <style scoped>
 .win-titlebar {
-  @apply bg-warmgray-200
+  @apply bg-warmgray-200 dark:bg-warmgray-900
 }
 .bound-titlebar {
-  @apply bg-bluegray-200
+  @apply bg-bluegray-200 dark:bg-truegray-800
 }
 </style>

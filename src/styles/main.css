@@ -3,12 +3,12 @@ body,
 #app {
   margin: 0;
   padding: 0;
-  @apply bg-coolgray-100;
+  @apply bg-coolgray-100 dark:bg-coolgray-700 dark:text-white;
 }
 
 .btn {
   @apply px-2 py-1 rounded inline-block
-    bg-coolgray-400 text-white cursor-pointer
+    bg-coolgray-400 text-white dark:text-black  cursor-pointer
     hover:bg-teal-700
     disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50;
 }
