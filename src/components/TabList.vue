@@ -9,35 +9,41 @@ const props = defineProps<{
 // TODO typesafe emits
 const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive'])
 
+const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
+const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
+
 onMounted(() => console.log('Updating list', props.groupData))
 </script>
 
 <template>
-  <div flex flex-col border border-rounded w-xl>
-    <div text-lg bg-blue-2>
+  <div flex flex-col self-start border-rounded w-xs bg-coolgray-50 overflow-hidden shadow-md>
+    <div
+      text-lg bg-coolgray-200
+      :class="{ 'win-titlebar': isWindow, 'bound-titlebar': isBounded }"
+    >
       {{ groupData.title }}
     </div>
-    <div flex flex-row>
-      <button v-if="groupData.windowId && !groupData.bookmarkId" grow class="btn" @click="emit('bind', id)">
+    <div flex flex-row gap-1em mla p-1>
+      <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" @click="emit('bind', id)">
         Bind
       </button>
-      <button v-if="groupData.windowId && groupData.bookmarkId" grow class="btn" @click="emit('persist', id)">
+      <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" @click="emit('persist', id)">
         Persist
       </button>
-      <button v-if="groupData.windowId" grow class="btn" @click="emit('archive', id)">
+      <button v-if="groupData.windowId" class="btn" @click="emit('archive', id)">
         Archive
       </button>
-      <button v-if="groupData.windowId && groupData.bookmarkId" grow class="btn" @click="emit('unbind', id)">
+      <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" @click="emit('unbind', id)">
         Unbind
       </button>
-      <button v-if="groupData.bookmarkId && !groupData.windowId" grow class="btn" @click="emit('restore', id)">
+      <button v-if="groupData.bookmarkId && !groupData.windowId" class="btn" @click="emit('restore', id)">
         Restore
       </button>
     </div>
-    <ul>
-      <li v-for="item in groupData.tabs" :key="item.id" flex flex-content-start gap-1em p-1em>
-        <img :src="item.favIconUrl" w-5 h-5>
-        <div :title="item.url" text-left>
+    <ul p-2>
+      <li v-for="item in groupData.tabs" :key="item.id" flex flex-content-start p-1>
+        <img :src="item.favIconUrl" w-5 h-5 m-r2 border-rounded border-coolGray-2>
+        <div :title="item.url" text-nowrap text-left overflow-hidden>
           {{ item.title }}
         </div>
       </li>
@@ -46,9 +52,10 @@ onMounted(() => console.log('Updating list', props.groupData))
 </template>
 
 <style scoped>
-.btn {
-  /* border-width: 1px;
-  border-color: rgba(96, 165, 250); */
-  @apply border border-blue
+.win-titlebar {
+  @apply bg-warmgray-200
+}
+.bound-titlebar {
+  @apply bg-bluegray-200
 }
 </style>

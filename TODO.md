@@ -18,3 +18,6 @@
 - abstract bookmarks as persist method, provide other storage types
 - add sidebar view?
 - group emoticon?
+
+- masonry grid for groups
+- unocss isn't that great, maybe remove it
