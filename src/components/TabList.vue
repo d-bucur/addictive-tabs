@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 // TODO typesafe emits
-const emit = defineEmits(['bind', 'persist', 'restore', 'unbind'])
+const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive'])
 
 onMounted(() => console.log('Updating list', props.groupData))
 </script>
@@ -23,6 +23,9 @@ onMounted(() => console.log('Updating list', props.groupData))
       </button>
       <button v-if="groupData.windowId && groupData.bookmarkId" grow class="btn" @click="emit('persist', id)">
         Persist
+      </button>
+      <button v-if="groupData.windowId" grow class="btn" @click="emit('archive', id)">
+        Archive
       </button>
       <button v-if="groupData.windowId && groupData.bookmarkId" grow class="btn" @click="emit('unbind', id)">
         Unbind

@@ -143,13 +143,28 @@ async function handleRestore(groupId: string) {
   const winId = window.id!.toString()
   bindings.windowToBookmark[winId] = tabsGroups.value[groupId].bookmarkId!
   saveState()
-  refreshGroups()
+  await refreshGroups()
 }
 
-function handleUnbind(groupId: string) {
+async function handleUnbind(groupId: string) {
   delete bindings.windowToBookmark[groupId]
   saveState()
-  refreshGroups()
+  await refreshGroups()
+}
+
+async function handleClose(groupId: string) {
+  await browser.windows.remove(parseInt(groupId))
+  if (bindings.windowToBookmark[groupId])
+    delete bindings.windowToBookmark[groupId]
+  await refreshGroups()
+}
+
+async function handleArchive(groupId: string) {
+  // maybe not great idea to call handlers directly?
+  if (!bindings.windowToBookmark[groupId])
+    await handleBind(groupId)
+  await handlePersist(groupId)
+  await handleClose(groupId)
 }
 
 function saveState() {
@@ -194,6 +209,7 @@ function cleanup() {
         @persist="handlePersist"
         @restore="handleRestore"
         @unbind="handleUnbind"
+        @archive="handleArchive"
       />
       <div />
     </div>
