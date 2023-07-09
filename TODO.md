@@ -1,6 +1,3 @@
-- decent ui
-
-- extract list into component and try it in popup
 - ignore extension tabs and maybe others as well
 - 
 - pages added as soon as tab opens do not have details as they haven't been loaded yet
@@ -24,3 +21,5 @@
 
 - masonry grid for groups
 - unocss isn't that great, maybe remove it
+
+- add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 

@@ -196,10 +196,19 @@ function cleanup() {
   console.log('Unmounting, saving state')
   saveState()
 }
+
+function openOverviewPage() {
+  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
+}
 </script>
 
 <template>
   <main class="px-4 py-5 text-center">
+    <div>
+      <button class="btn mt-2" @click="openOverviewPage">
+        Full page
+      </button>
+    </div>
     <div flex gap-1em flex-wrap>
       <TabList
         v-for="k in groupKeysIterator" :id="k"
