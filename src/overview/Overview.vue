@@ -5,7 +5,7 @@ import { faviconURL } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
-// TODO binding is also duplicated inside groups. refactor this later
+// TODO binding is duplicated inside groups. refactor this later
 const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
 
 async function refreshGroups() {

@@ -15,3 +15,4 @@
 
 - move ownership of groups to background script so the state is persisted between page reloads?
 - abstract bookmarks as persist method, provide other storage types
+- add sidebar view?

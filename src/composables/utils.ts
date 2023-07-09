@@ -12,8 +12,6 @@ export interface Group {
   tabs: Array<TabItem>
 }
 
-// export type Groups = Dictionary<Group>
-
 export interface Dictionary<T> {
   [Key: string]: T
 }
