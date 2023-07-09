@@ -17,6 +17,7 @@
 
 ## nice to have
 - order windows by last used and maybe divide windows and bookmarks into separate categories
+- click individual tabs
 - drag & drop functionality
 - hover over item to see address
 - toggle mode that shows address under tab titles

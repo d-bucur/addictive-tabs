@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { type Bookmarks, type Tabs } from 'webextension-polyfill'
 import type { Dictionary, Group, TabItem } from '~/composables/utils'
-import { faviconURL } from '~/composables/utils'
+import { faviconURL, getViewType } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
 // TODO binding is duplicated inside groups. refactor this later
 const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
+
+const viewType = computed(getViewType)
 
 async function refreshGroups() {
   // TODO perf check if this renders multiple times. if so, use buffer
@@ -181,20 +183,9 @@ function loadState() {
     // console.log('Found state, loading')
 }
 
-function getViewType(): string {
-  const popups = browser.extension.getViews({ type: 'popup' })
-  if (popups[0] && popups[0].innerWidth === window.innerWidth && popups[0].innerHeight === window.innerHeight)
-    return 'popup'
-  // TODO might return wrong type if multiple tabs opened with different sizes
-  const tabs = browser.extension.getViews({ type: 'tab' })
-  if (tabs[0] && tabs[0].innerWidth === window.innerWidth && tabs[0].innerHeight === window.innerHeight)
-    return 'tab'
-  return 'sidebar'
-}
-
 async function handleEntrypoint() {
   // sidebar entry, query params not possible in manifest
-  if (getViewType() === 'sidebar') {
+  if (viewType.value === 'sidebar') {
     console.log('loading other style')
     document.getElementsByTagName('head')[0].insertAdjacentHTML(
       'beforeend',
@@ -224,14 +215,28 @@ function cleanup() {
 function openOverviewPage() {
   browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
 }
+
+// sidepanel api is still shit and buggy
+// async function openSidePanel() {
+//   await browser.sidePanel.open({
+//     windowId: await browser.windows.getCurrent(),
+//   })
+//   await browser.sidePanel.setOptions({
+//     enabled: true,
+//     path: './dist/overview/index.html',
+//   })
+// }
 </script>
 
 <template>
   <main class="px-4 py-5 text-center">
     <div>
-      <button class="btn mt-2" @click="openOverviewPage">
-        Full page
+      <button v-if="viewType !== 'tab'" class="btn mt-2" @click="openOverviewPage">
+        Full
       </button>
+      <!-- <button class="btn mt-2" @click="openSidePanel">
+        Side
+      </button> -->
     </div>
     <div flex gap-1em flex-wrap>
       <TabList
