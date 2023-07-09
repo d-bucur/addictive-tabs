@@ -21,6 +21,7 @@ export async function getManifest() {
       page: './dist/options/index.html',
       open_in_tab: true,
     },
+    // @ts-expect-error: newish parameter
     side_panel: {
       default_path: './dist/overview/index.html',
     },

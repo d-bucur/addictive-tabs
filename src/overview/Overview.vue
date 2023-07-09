@@ -34,6 +34,8 @@ function groupsAddTab(key: string, tab: TabItem, title?: string) {
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
   for (const tab of tabsRes) {
+    if (tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://'))
+      continue
     const tabItem = convertTab(tab)
     const winId = tab.windowId?.toString() || 'undefined' // might happen in some edge cases?
     const boundBmId = bindings.windowToBookmark[winId]

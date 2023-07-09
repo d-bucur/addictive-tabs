@@ -18,7 +18,7 @@ onMounted(() => console.log('Updating list', props.groupData))
 <template>
   <div
     class="tab-group-card"
-    flex flex-col self-start border-rounded w-xs max-h-100 grow
+    flex flex-col self-start border-rounded w-xs max-h-100
     bg-coolgray-50 dark:bg-coolgray-800 shadow-md
   >
     <div
