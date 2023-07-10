@@ -1,5 +1,5 @@
 ## first release (can realease to store and use personally)
-- possibility to change names of groups and auto window naming like TBP
+- auto window naming like TBP
 - pages added as soon as tab opens do not have details as they haven't been loaded yet
 - more granular updates instead of reloading everything
 - better reactive updates on changes

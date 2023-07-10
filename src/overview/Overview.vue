@@ -193,6 +193,16 @@ async function handleEntrypoint() {
   }
 }
 
+async function handleRename(id: string, value: string) {
+  const group = tabsGroups.value[id]
+  group.title = value
+  if (group.bookmarkId) {
+    browser.bookmarks.update(group.bookmarkId, {
+      title: value,
+    })
+  }
+}
+
 onMounted(async () => {
   await handleEntrypoint()
   loadState()
@@ -248,6 +258,7 @@ function openOverviewPage() {
         @restore="handleRestore"
         @unbind="handleUnbind"
         @archive="handleArchive"
+        @rename="handleRename"
       />
       <div />
     </div>

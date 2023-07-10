@@ -7,19 +7,13 @@ const props = defineProps<{
 }>()
 
 // TODO typesafe emits
-const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'update:groupData'])
+const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename'])
 
 const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
 
-const groupSync = computed<Group>({
-  get() {
-    return props.groupData
-  },
-  set(val) {
-    emit('update:groupData', val)
-  },
-})
+// @ts-expect-error: value exists on event
+const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.value)
 
 onMounted(() => console.log('Updating list', props.groupData))
 </script>
@@ -35,7 +29,7 @@ onMounted(() => console.log('Updating list', props.groupData))
       :class="{ 'win-titlebar': isWindow, 'bound-titlebar': isBounded }"
     >
       <!-- <span>{{ groupData.title }}</span> -->
-      <input v-model="groupSync.title" bg-transparent :placeholder="groupData.title">
+      <input bg-transparent :value="groupData.title" @input="titleUpdateHandler">
     </div>
     <div flex flex-row gap-1em mla p-1>
       <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" @click="emit('bind', id)">
