@@ -3,14 +3,24 @@ import type { Group } from '~/composables/utils'
 
 const props = defineProps<{
   id: string
+  title: string // is already in groupData, but passing as a prop to enable two way binding
   groupData: Group
 }>()
 
 // TODO typesafe emits
-const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive'])
+const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'update:title'])
 
 const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
+
+const syncTitle = computed<string>({
+  get() {
+    return props.title
+  },
+  set(val: string) {
+    emit('update:title', val)
+  },
+})
 
 onMounted(() => console.log('Updating list', props.groupData))
 </script>
@@ -25,7 +35,8 @@ onMounted(() => console.log('Updating list', props.groupData))
       text-lg bg-coolgray-200 dark:bg-gray-900
       :class="{ 'win-titlebar': isWindow, 'bound-titlebar': isBounded }"
     >
-      {{ groupData.title }}
+      <span>{{ title }}</span>
+      <input v-model="syncTitle" :placeholder="title">
     </div>
     <div flex flex-row gap-1em mla p-1>
       <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" @click="emit('bind', id)">

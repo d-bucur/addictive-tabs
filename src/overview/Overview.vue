@@ -117,7 +117,7 @@ async function handleBind(groupId: string) {
   // console.log(`Binding ${groupId}`)
   const bmFolder = await browser.bookmarks.create({
     parentId: BOOKMARK_TREE_ID,
-    title: groupId,
+    title: tabsGroups.value[groupId].title,
   })
   bindings.windowToBookmark[groupId] = bmFolder.id
   saveState()
@@ -242,6 +242,7 @@ function openOverviewPage() {
       <TabList
         v-for="k in groupKeysIterator" :id="k"
         :key="k"
+        v-model:title="tabsGroups.value[k].title"
         :group-data="tabsGroups.value[k]"
         @bind="handleBind"
         @persist="handlePersist"
