@@ -242,7 +242,6 @@ function openOverviewPage() {
       <TabList
         v-for="k in groupKeysIterator" :id="k"
         :key="k"
-        v-model:title="tabsGroups.value[k].title"
         :group-data="tabsGroups.value[k]"
         @bind="handleBind"
         @persist="handlePersist"
