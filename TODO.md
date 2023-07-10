@@ -1,13 +1,13 @@
 ## first release (can realease to store and use personally)
-- auto window naming like TBP
+- button to delete archived group
 - pages added as soon as tab opens do not have details as they haven't been loaded yet
 - more granular updates instead of reloading everything
 - better reactive updates on changes
 - bindings do not persist between browser reloads as windows change ids
-- button to delete archived group
 - create root bm folder under other bookmarks (like Tabli)
   
 - BUG: archive sometimes doesn't refresh after closing
+- BUG: opening full page when sidebar is also opened make it get the override css
 
 ## possibly critical before release
 - unocss isn't that great, maybe remove it
@@ -29,4 +29,4 @@
 - masonry grid for groups
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
-- chrome groups support
+- chrome groups support: one level of bm folder nesting maps to group

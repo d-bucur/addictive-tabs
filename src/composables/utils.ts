@@ -24,6 +24,12 @@ export const groupBy = function<T> (arr: Array<T>, key: (x: T) => string): { [Ke
   }, {})
 }
 
+const domainRe = /(?:.*\.)?(.+)\..+/
+export function extractDomainName(url: string): string {
+  const match = new URL(url).host.match(domainRe)
+  return match ? match[1] : ''
+}
+
 export function faviconURL(u: string | undefined): string {
   if (!u)
     return ''

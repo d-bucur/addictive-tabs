@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type Bookmarks, type Tabs } from 'webextension-polyfill'
 import type { Dictionary, Group, TabItem } from '~/composables/utils'
-import { faviconURL, getViewType, groupBy } from '~/composables/utils'
+import { extractDomainName, faviconURL, getViewType, groupBy } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
@@ -33,6 +33,23 @@ function groupsAddTab(key: string, tab: TabItem, title?: string) {
   }
 }
 
+function getGroupTitle(winId: string, tabs: Tabs.Tab[]): string {
+  const boundBmId = bindings.windowToBookmark[winId]
+  // if bookmark then get it form the bookmark title
+  if (boundBmId) {
+    if (tabsGroups.value[boundBmId]) {
+      const title = tabsGroups.value[boundBmId].title
+      delete tabsGroups.value[boundBmId]
+      return title
+    }
+  }
+  // otherwise compute from existing tabs
+  const domains = groupBy(tabs, t => extractDomainName(t.url!))
+  // sort by number of entries
+  const domainsSorted = Object.keys(domains).sort((l, r) => domains[r].length - domains[l].length)
+  return domainsSorted.slice(0, 2).join(', ')
+}
+
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
 
@@ -46,7 +63,7 @@ async function refreshActiveWindows() {
       const tabItem = convertTab(tab)
       groupsAddTab(winId, tabItem)
     }
-
+    tabsGroups.value[winId].title = getGroupTitle(winId, tabs)
     // TODO refactor title logic
     let title = null
     const boundBmId = bindings.windowToBookmark[winId]
@@ -191,7 +208,7 @@ function loadState() {
 }
 
 async function handleEntrypoint() {
-  // sidebar entry, query params not possible in manifest
+  // sidebar entry, query params would be nicer but not possible in manifest
   if (viewType.value === 'sidebar') {
     console.log('loading other style')
     document.getElementsByTagName('head')[0].insertAdjacentHTML(
