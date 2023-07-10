@@ -16,6 +16,14 @@ export interface Dictionary<T> {
   [Key: string]: T
 }
 
+export const groupBy = function<T> (arr: Array<T>, key: (x: T) => string): { [Key: string]: Array<T> } {
+  return arr.reduce((rv, x) => {
+    // @ts-expect-error: indexing into object by string
+    (rv[key(x)] = rv[key(x)] || []).push(x)
+    return rv
+  }, {})
+}
+
 export function faviconURL(u: string | undefined): string {
   if (!u)
     return ''

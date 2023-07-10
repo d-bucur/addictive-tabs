@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type Bookmarks, type Tabs } from 'webextension-polyfill'
 import type { Dictionary, Group, TabItem } from '~/composables/utils'
-import { faviconURL, getViewType } from '~/composables/utils'
+import { faviconURL, getViewType, groupBy } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
@@ -35,20 +35,27 @@ function groupsAddTab(key: string, tab: TabItem, title?: string) {
 
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
-  for (const tab of tabsRes) {
-    if (tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://'))
-      continue
-    const tabItem = convertTab(tab)
-    const winId = tab.windowId?.toString() || 'undefined' // might happen in some edge cases?
+
+  const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
+  console.log('tabsGrouped', tabsGrouped)
+
+  for (const [winId, tabs] of Object.entries(tabsGrouped)) {
+    for (const tab of tabs) {
+      if (tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://'))
+        continue
+      const tabItem = convertTab(tab)
+      groupsAddTab(winId, tabItem)
+    }
+
+    // TODO refactor title logic
+    let title = null
     const boundBmId = bindings.windowToBookmark[winId]
-    let title = null // logic for bookmark title is kind of ugly
     if (boundBmId) {
       // console.log('Window bound to bm', tabsGroups.value[boundBmId])
       if (tabsGroups.value[boundBmId])
         title = tabsGroups.value[boundBmId].title
       delete tabsGroups.value[boundBmId]
     }
-    groupsAddTab(winId, tabItem)
     if (title)
       tabsGroups.value[winId].title = title
     tabsGroups.value[winId].windowId = winId

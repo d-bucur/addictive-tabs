@@ -4,7 +4,7 @@
 - more granular updates instead of reloading everything
 - better reactive updates on changes
 - bindings do not persist between browser reloads as windows change ids
-- delete archived group
+- button to delete archived group
 - create root bm folder under other bookmarks (like Tabli)
   
 - BUG: archive sometimes doesn't refresh after closing
@@ -22,6 +22,7 @@
 - hover over item to see address
 - toggle mode that shows address under tab titles
 - search bar
+- move current window into existing bookmark?
 
 ## post release
 - abstract bookmarks as persist method, provide other storage types
