@@ -1,15 +1,16 @@
-## first release (can realease to store and use personally)
-- button to delete archived group
+## first release (can release to store and use personally)
 - pages added as soon as tab opens do not have details as they haven't been loaded yet
 - more granular updates instead of reloading everything
 - better reactive updates on changes
 - bindings do not persist between browser reloads as windows change ids
 - create root bm folder under other bookmarks (like Tabli)
   
-- BUG: archive sometimes doesn't refresh after closing
-- BUG: opening full page when sidebar is also opened make it get the override css
+- BUG: autoname should only work if there is no other name to use
+- BUG: archive doesn't refresh the created bookmark
+- BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
 
 ## possibly critical before release
+- cleanup folders, decide which tests to keep
 - unocss isn't that great, maybe remove it
 - move ownership of groups to background script so updated can happen in the bg
 - auto sync (needs details)
@@ -25,8 +26,11 @@
 - move current window into existing bookmark?
 
 ## post release
-- abstract bookmarks as persist method, provide other storage types
-- masonry grid for groups
+- abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
+- chrome groups support: one level of bm folder nesting maps to group
+- masonry grid for groups. or wait for grid implementation
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
-- chrome groups support: one level of bm folder nesting maps to group
+- consider https://headlessui.com/ for components
+- see https://tailwindui.com/ or bootstrap for example styling
+- firefox port https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension

@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 // TODO typesafe emits
-const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename'])
+const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename', 'remove'])
 
 const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
@@ -29,7 +29,7 @@ onMounted(() => console.log('Updating list', props.groupData))
       :class="{ 'win-titlebar': isWindow, 'bound-titlebar': isBounded }"
     >
       <!-- <span>{{ groupData.title }}</span> -->
-      <input bg-transparent :value="groupData.title" @input="titleUpdateHandler">
+      <input bg-transparent :value="groupData.title" @change="titleUpdateHandler">
     </div>
     <div flex flex-row gap-1em mla p-1>
       <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" @click="emit('bind', id)">
@@ -47,6 +47,9 @@ onMounted(() => console.log('Updating list', props.groupData))
       <button v-if="groupData.bookmarkId && !groupData.windowId" class="btn" @click="emit('restore', id)">
         Restore
       </button>
+      <button class="btn" @click="emit('remove', id)">
+        X Remove
+      </button> <!-- TODO add confirmation -->
     </div>
     <ul p-2 overflow-auto>
       <li v-for="item in groupData.tabs" :key="item.id" flex flex-content-start p-1>

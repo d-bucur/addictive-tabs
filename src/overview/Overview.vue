@@ -10,9 +10,9 @@ const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBo
 
 const viewType = computed(getViewType)
 
+// TODO more efficient rendering. don't clear every time but only update as necessary
 async function refreshGroups() {
   // TODO perf check if this renders multiple times. if so, use buffer
-  // TODO more efficient rendering. don't clear every time but only update as necessary
   // TODO there can be a race condition here when triggered by multiple tabs (ie restoring a window)
   console.log('Starting refreshGroups')
   tabsGroups.value = {}
@@ -52,6 +52,7 @@ function getGroupTitle(winId: string, tabs: Tabs.Tab[]): string {
 
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
+  // console.log('tabsAPI', tabsRes)
 
   const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
   console.log('tabsGrouped', tabsGrouped)
@@ -180,11 +181,12 @@ async function handleUnbind(groupId: string) {
   await refreshGroups()
 }
 
-async function handleClose(groupId: string) {
-  await browser.windows.remove(parseInt(groupId))
-  if (bindings.windowToBookmark[groupId])
-    delete bindings.windowToBookmark[groupId]
-  await refreshGroups()
+async function closeWindow(winId: string) {
+  await browser.windows.remove(parseInt(winId))
+  // note: tabs will still be returned from API at this point
+  if (bindings.windowToBookmark[winId])
+    delete bindings.windowToBookmark[winId]
+  delete tabsGroups.value[winId]
 }
 
 async function handleArchive(groupId: string) {
@@ -192,7 +194,16 @@ async function handleArchive(groupId: string) {
   if (!bindings.windowToBookmark[groupId])
     await handleBind(groupId)
   await handlePersist(groupId)
-  await handleClose(groupId)
+  await closeWindow(groupId)
+  // TODO bug: just bookmaked folder does not re-render, should be solved with state change handlers
+}
+
+async function handleRemove(groupId: string) {
+  const group = tabsGroups.value[groupId]
+  if (group.windowId)
+    await closeWindow(groupId)
+  if (group.bookmarkId)
+    await browser.bookmarks.removeTree(group.bookmarkId)
 }
 
 function saveState() {
@@ -232,6 +243,7 @@ onMounted(async () => {
   loadState()
   await refreshGroups()
   window.addEventListener('beforeunload', _event => cleanup())
+  browser.windows.onRemoved.addListener(_id => console.log('window.onRemoved'))
   // TODO handle updates better, check for race conditions
   // browser.tabs.onCreated.addListener(_t => refreshGroups())
   // browser.tabs.onRemoved.addListener(_t => refreshGroups())
@@ -283,6 +295,7 @@ function openOverviewPage() {
         @unbind="handleUnbind"
         @archive="handleArchive"
         @rename="handleRename"
+        @remove="handleRemove"
       />
       <div />
     </div>
