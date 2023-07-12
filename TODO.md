@@ -1,13 +1,12 @@
 ## wip
-- more granular updates instead of reloading everything
-- better reactive updates on changes
+- some bugs with operations and bindinds
+- BUG: autoname not working at all
+- BUG: autoname should only work if there is no other name to use
+- recalculate name on group change
   
 ## first release (can release to store and use personally)
-- bindings do not persist between browser reloads as windows change ids
 - create root bm folder under other bookmarks (like Tabli)
-- add recalculating name on group change
-  
-- BUG: autoname should only work if there is no other name to use
+- bindings do not persist between browser reloads as windows change ids
 - BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
 
 ## possibly critical before release
@@ -30,10 +29,10 @@
 ## post release
 - abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
 - chrome groups support: one level of bm folder nesting maps to group
-- masonry grid for groups. or wait for grid implementation
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
 - consider https://headlessui.com/ for components
 - see https://tailwindui.com/ or bootstrap for example styling
-- firefox port https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
 - save tab history to localstorage
+- firefox port when manifest 3 is ready https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
+- masonry grid for groups. or wait for grid implementation

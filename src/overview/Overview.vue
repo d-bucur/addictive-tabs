@@ -230,7 +230,7 @@ function redrawWindow(winId: number, canIdBeInvalid = false) {
 
 function handleWinOnCreated(win: Windows.Window): void {
   const winId = win.id!.toString()
-  console.log('handleWinOnCreated', win)
+  // console.log('handleWinOnCreated', win)
   tabsGroups.value[winId] = makeGroupFromWindow(winId, win.tabs ?? [])
   // TODO hard: check if it is a bound window that was reopened
 }
@@ -249,11 +249,16 @@ function handleTabOnDetached(tabId: number, detachInfo: Tabs.OnDetachedDetachInf
   redrawWindow(detachInfo.oldWindowId, true)
 }
 
+function handleTabOnMoved(tabId: number, moveInfo: Tabs.OnMovedMoveInfoType) {
+  redrawWindow(moveInfo.windowId)
+}
+
 function addStateChangeHandlers() {
   browser.tabs.onRemoved.addListener(handleTabOnRemoved)
   browser.tabs.onUpdated.addListener(handleTabOnUpdate)
   browser.tabs.onAttached.addListener(handleTabOnAttached)
   browser.tabs.onDetached.addListener(handleTabOnDetached)
+  browser.tabs.onMoved.addListener(handleTabOnMoved)
 
   browser.windows.onCreated.addListener(handleWinOnCreated)
   browser.windows.onRemoved.addListener(handleWinOnRemoved)
@@ -265,6 +270,7 @@ function removeStateChangeHandlers() {
   browser.tabs.onUpdated.removeListener(handleTabOnUpdate)
   browser.tabs.onAttached.removeListener(handleTabOnAttached)
   browser.tabs.onDetached.removeListener(handleTabOnDetached)
+  browser.tabs.onMoved.removeListener(handleTabOnMoved)
 
   browser.windows.onCreated.removeListener(handleWinOnCreated)
   browser.windows.onRemoved.removeListener(handleWinOnRemoved)
