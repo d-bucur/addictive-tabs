@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Bookmarks, type Tabs } from 'webextension-polyfill'
+import type { Bookmarks, Tabs, Windows } from 'webextension-polyfill'
 import type { Dictionary, Group, TabItem } from '~/composables/utils'
 import { extractDomainName, faviconURL, getViewType, groupBy } from '~/composables/utils'
 
@@ -22,6 +22,7 @@ async function refreshGroups() {
 }
 
 function groupsAddTab(key: string, tab: TabItem, title?: string) {
+  // TODO maybe remove and create groups in each caller
   if (tabsGroups.value[key]) {
     tabsGroups.value[key].tabs.push(tab)
   }
@@ -243,10 +244,7 @@ onMounted(async () => {
   loadState()
   await refreshGroups()
   window.addEventListener('beforeunload', _event => cleanup())
-  browser.windows.onRemoved.addListener(_id => console.log('window.onRemoved'))
-  // TODO handle updates better, check for race conditions
-  // browser.tabs.onCreated.addListener(_t => refreshGroups())
-  // browser.tabs.onRemoved.addListener(_t => refreshGroups())
+  addStateChangeHandlers()
 })
 
 onUnmounted(() => {
@@ -260,6 +258,46 @@ function cleanup() {
 
 function openOverviewPage() {
   browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
+}
+
+// TODO pass refs and move to separate file
+function addStateChangeHandlers() {
+  browser.tabs.onRemoved.addListener(() => console.log('tabs.onRemoved TODO'))
+  browser.tabs.onUpdated.addListener(handleTabOnUpdate)
+  browser.tabs.onAttached.addListener(() => console.log('tabs.onAttached TODO'))
+  browser.tabs.onDetached.addListener(() => console.log('tabs.onDetached TODO'))
+
+  browser.windows.onCreated.addListener(handleWinOnCreated)
+  browser.windows.onRemoved.addListener(handleWinOnRemoved)
+  // TODO add handlers for reordering
+}
+
+function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
+  // TODO very granular update for page loading. for the others maybe just render the entire group
+  console.log('onUpdated', changeInfo)
+  const tabInGroup = tabsGroups.value[tab.windowId!].tabs[tab.index]
+  if (changeInfo.favIconUrl)
+    tabInGroup.favIconUrl = changeInfo.favIconUrl
+  if (changeInfo.title) {
+    tabInGroup.title = changeInfo.title
+    tabInGroup.url = tab.url!
+  }
+  if (changeInfo.status !== 'complete')
+    return
+  tabsGroups.value[tab.windowId!].tabs[tab.index] = convertTab(tab)
+}
+
+function handleWinOnRemoved(windowId: number): void {
+  delete tabsGroups.value[windowId]
+}
+
+function handleWinOnCreated(win: Windows.Window): void {
+  // TODO merge with groupsAddTab
+  // TODO need make initial group from tabs. refactor with logic above
+  tabsGroups.value[win.id!] = {
+    title: win.title || '',
+    tabs: [],
+  }
 }
 
 // sidepanel api is still shit and buggy
