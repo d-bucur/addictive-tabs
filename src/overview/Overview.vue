@@ -209,6 +209,13 @@ async function handleEntrypoint() {
 }
 
 function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
+  async function redrawWindow(winId: number) {
+    const win = await browser.windows.get(winId, {
+      populate: true,
+    })
+    handleWinOnCreated(win)
+  }
+
   function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
     // TODO very granular update for page loading. for the others maybe just render the entire group
     console.log('onUpdated', changeInfo)
@@ -237,18 +244,20 @@ function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
     // TODO hard: check if it is a bound window that was reopened
   }
 
-  async function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
+  function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
     console.log('handleTabOnRemoved', removeInfo)
-    const win = await browser.windows.get(removeInfo.windowId, {
-      populate: true,
-    })
-    delete tabsGroups.value[removeInfo.windowId]
-    handleWinOnCreated(win)
+    // delete tabsGroups.value[removeInfo.windowId]
+    redrawWindow(removeInfo.windowId)
+  }
+
+  function handleTabOnAttached(tabId: number, attachInfo: Tabs.OnAttachedAttachInfoType) {
+    console.log('handleTabOnAttached', attachInfo)
+    redrawWindow(attachInfo.newWindowId)
   }
 
   browser.tabs.onRemoved.addListener(handleTabOnRemoved)
   browser.tabs.onUpdated.addListener(handleTabOnUpdate)
-  browser.tabs.onAttached.addListener(() => console.log('tabs.onAttached TODO'))
+  browser.tabs.onAttached.addListener(handleTabOnAttached)
   browser.tabs.onDetached.addListener(() => console.log('tabs.onDetached TODO'))
 
   browser.windows.onCreated.addListener(handleWinOnCreated)
