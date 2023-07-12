@@ -1,5 +1,5 @@
 import type { Bookmarks, Tabs } from 'webextension-polyfill'
-import { faviconURL } from '~/composables/utils'
+import { extractDomainName, faviconURL, groupBy } from '~/composables/utils'
 import type { Group, TabItem } from '~/composables/utils'
 
 export function convertTab(tab: Tabs.Tab): TabItem {
@@ -23,6 +23,7 @@ export function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
 export function makeGroupFromWindow(winId: string, tabs: Tabs.Tab[]): Group {
   return {
     title: winId,
+    windowId: winId,
     tabs: tabs.reduce((a: TabItem[], tab) => {
       if (!isIgnoredTab(tab))
         a.push(convertTab(tab))
@@ -41,4 +42,12 @@ export function makeGroupFromBm(bmFolder: Bookmarks.BookmarkTreeNode): Group {
 
 function isIgnoredTab(tab: Tabs.Tab) {
   return tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://')
+}
+
+export function makeGroupTitle(group: Group) {
+  // otherwise compute from existing tabs
+  const domains = groupBy(group.tabs, t => extractDomainName(t.url!))
+  // sort by number of entries
+  const domainsSorted = Object.keys(domains).sort((l, r) => domains[r].length - domains[l].length)
+  return domainsSorted.slice(0, 2).join(', ')
 }

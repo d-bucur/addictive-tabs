@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { Tabs } from 'webextension-polyfill'
 import { addStateChangeHandlers } from './stateChangeHandlers'
-import { makeGroupFromBm, makeGroupFromWindow } from './groupOperations'
+import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
 import type { Dictionary, Group } from '~/composables/utils'
-import { extractDomainName, getViewType, groupBy } from '~/composables/utils'
+import { getViewType, groupBy } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
@@ -30,24 +29,8 @@ async function refreshGroups() {
   tabsGroups.value = {}
   await refreshBookmarks()
   await refreshActiveWindows()
+  refreshBindReferences()
   console.log('Ended refreshGroups', tabsGroups.value)
-}
-
-function getGroupTitle(winId: string, tabs: Tabs.Tab[]): string {
-  const boundBmId = bindings.windowToBookmark[winId]
-  // if bookmark then get it form the bookmark title
-  if (boundBmId) {
-    if (tabsGroups.value[boundBmId]) {
-      const title = tabsGroups.value[boundBmId].title
-      delete tabsGroups.value[boundBmId]
-      return title
-    }
-  }
-  // otherwise compute from existing tabs
-  const domains = groupBy(tabs, t => extractDomainName(t.url!))
-  // sort by number of entries
-  const domainsSorted = Object.keys(domains).sort((l, r) => domains[r].length - domains[l].length)
-  return domainsSorted.slice(0, 2).join(', ')
 }
 
 function refreshBindReferences() {
@@ -57,8 +40,10 @@ function refreshBindReferences() {
       continue
       // this will not be persisted until next save
     }
+    const bmId = bindings.windowToBookmark[winId]
     // console.log('Updating binding for winId', winId)
-    tabsGroups.value[winId].bookmarkId = bindings.windowToBookmark[winId]
+    tabsGroups.value[winId].bookmarkId = bmId
+    delete tabsGroups.value[bmId]
   }
 }
 
@@ -70,23 +55,12 @@ async function refreshActiveWindows() {
 
   for (const [winId, tabs] of Object.entries(tabsGrouped)) {
     const group = makeGroupFromWindow(winId, tabs)
-    tabsGroups.value[winId] = group
-
-    // TODO refactor title logic
-    tabsGroups.value[winId].title = getGroupTitle(winId, tabs)
-    let title = null
     const boundBmId = bindings.windowToBookmark[winId]
-    if (boundBmId) {
-      // console.log('Window bound to bm', tabsGroups.value[boundBmId])
-      if (tabsGroups.value[boundBmId])
-        title = tabsGroups.value[boundBmId].title
-      delete tabsGroups.value[boundBmId]
-    }
-    if (title)
-      tabsGroups.value[winId].title = title
-    tabsGroups.value[winId].windowId = winId
+    group.title = boundBmId
+      ? tabsGroups.value[boundBmId].title
+      : makeGroupTitle(group)
+    tabsGroups.value[winId] = group
   }
-  refreshBindReferences()
   console.log('API tabs', tabsRes)
 }
 
