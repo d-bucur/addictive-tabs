@@ -245,20 +245,23 @@ function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
   }
 
   function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
-    console.log('handleTabOnRemoved', removeInfo)
-    // delete tabsGroups.value[removeInfo.windowId]
+    // console.log('handleTabOnRemoved', removeInfo)
     redrawWindow(removeInfo.windowId)
   }
 
   function handleTabOnAttached(tabId: number, attachInfo: Tabs.OnAttachedAttachInfoType) {
-    console.log('handleTabOnAttached', attachInfo)
+    // console.log('handleTabOnAttached', attachInfo)
     redrawWindow(attachInfo.newWindowId)
+  }
+
+  function handleTabOnDetached(tabId: number, detachInfo: Tabs.OnDetachedDetachInfoType) {
+    redrawWindow(detachInfo.oldWindowId)
   }
 
   browser.tabs.onRemoved.addListener(handleTabOnRemoved)
   browser.tabs.onUpdated.addListener(handleTabOnUpdate)
   browser.tabs.onAttached.addListener(handleTabOnAttached)
-  browser.tabs.onDetached.addListener(() => console.log('tabs.onDetached TODO'))
+  browser.tabs.onDetached.addListener(handleTabOnDetached)
 
   browser.windows.onCreated.addListener(handleWinOnCreated)
   browser.windows.onRemoved.addListener(handleWinOnRemoved)
