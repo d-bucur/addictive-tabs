@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { addStateChangeHandlers } from './stateChangeHandlers'
-import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
+import { type Tabs, type Windows } from 'webextension-polyfill'
+import { convertTab, makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
 import type { Dictionary, Group } from '~/composables/utils'
 import { getViewType, groupBy } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
-// TODO binding is duplicated inside groups. refactor this later
+// binding is duplicated inside groups. any way to refactor this?
 const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
 
 const viewType = computed(getViewType)
@@ -73,15 +73,15 @@ async function refreshBookmarks() {
   }
 }
 
-async function handleBind(groupId: string) {
+async function handleBind(winId: string) {
   // console.log(`Binding ${groupId}`)
   const bmFolder = await browser.bookmarks.create({
     parentId: BOOKMARK_TREE_ID,
-    title: tabsGroups.value[groupId].title,
+    title: tabsGroups.value[winId].title,
   })
-  bindings.windowToBookmark[groupId] = bmFolder.id
+  bindings.windowToBookmark[winId] = bmFolder.id
   saveState()
-  tabsGroups.value[groupId].bookmarkId = bmFolder.id
+  tabsGroups.value[winId].bookmarkId = bmFolder.id
 }
 
 async function handlePersist(groupId: string) {
@@ -119,8 +119,15 @@ async function handleUnbind(groupId: string) {
 async function closeWindow(winId: string) {
   await browser.windows.remove(parseInt(winId))
   // note: tabs will still be returned from API at this point
-  if (bindings.windowToBookmark[winId])
+  cleanupOnWindowClose(winId)
+}
+
+function cleanupOnWindowClose(winId: string) {
+  const bmId = bindings.windowToBookmark[winId]
+  if (bmId) {
     delete bindings.windowToBookmark[winId]
+    createGroupFromBookmark(bmId)
+  }
   delete tabsGroups.value[winId]
 }
 
@@ -129,18 +136,23 @@ async function handleArchive(winId: string) {
   if (!bindings.windowToBookmark[winId])
     await handleBind(winId)
   await handlePersist(winId)
-  const group = tabsGroups.value[winId]
-  group.windowId = undefined
-  tabsGroups.value[group.bookmarkId!] = group
   await closeWindow(winId)
+}
+
+async function createGroupFromBookmark(bmId: string) {
+  const bm = await browser.bookmarks.get(bmId)
+  console.log('refreshing bookmark', bm)
+  tabsGroups.value[bmId] = makeGroupFromBm(bm[0])
 }
 
 async function handleRemove(groupId: string) {
   const group = tabsGroups.value[groupId]
   if (group.windowId)
     await closeWindow(groupId)
-  if (group.bookmarkId)
+  if (group.bookmarkId) {
     await browser.bookmarks.removeTree(group.bookmarkId)
+    delete tabsGroups.value[group.bookmarkId]
+  }
 }
 
 async function handleRename(id: string, value: string) {
@@ -194,6 +206,46 @@ async function handleEntrypoint() {
       'beforeend',
       '<link rel="stylesheet" href="../background/override.css" />')
   }
+}
+
+function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
+  function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
+    // TODO very granular update for page loading. for the others maybe just render the entire group
+    console.log('onUpdated', changeInfo)
+    const tabInGroup = tabsGroups.value[tab.windowId!].tabs[tab.index]
+    if (changeInfo.favIconUrl)
+      tabInGroup.favIconUrl = changeInfo.favIconUrl
+    if (changeInfo.title) {
+      tabInGroup.title = changeInfo.title
+      tabInGroup.url = tab.url!
+    }
+    if (changeInfo.status !== 'complete')
+      return
+    tabsGroups.value[tab.windowId!].tabs[tab.index] = convertTab(tab)
+  }
+
+  function handleWinOnRemoved(windowId: number): void {
+    // TODO not working when bound bookmark should be restored
+    cleanupOnWindowClose(windowId.toString())
+  }
+
+  function handleWinOnCreated(win: Windows.Window): void {
+    // TODO merge with groupsAddTab
+    // TODO need make initial group from tabs. refactor with logic above
+    tabsGroups.value[win.id!] = {
+      title: win.title ?? '',
+      tabs: [],
+    }
+  }
+
+  browser.tabs.onRemoved.addListener(() => console.log('tabs.onRemoved TODO'))
+  browser.tabs.onUpdated.addListener(handleTabOnUpdate)
+  browser.tabs.onAttached.addListener(() => console.log('tabs.onAttached TODO'))
+  browser.tabs.onDetached.addListener(() => console.log('tabs.onDetached TODO'))
+
+  browser.windows.onCreated.addListener(handleWinOnCreated)
+  browser.windows.onRemoved.addListener(handleWinOnRemoved)
+  // TODO add handlers for reordering
 }
 
 // sidepanel api is still shit and buggy

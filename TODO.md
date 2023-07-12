@@ -1,5 +1,4 @@
 ## wip
-- pages added as soon as tab opens do not have details as they haven't been loaded yet
 - more granular updates instead of reloading everything
 - better reactive updates on changes
   
