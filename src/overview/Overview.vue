@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Tabs, type Windows } from 'webextension-polyfill'
-import { convertTab, makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
+import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
 import type { Dictionary, Group } from '~/composables/utils'
 import { getViewType, groupBy } from '~/composables/utils'
 
@@ -170,11 +170,12 @@ onMounted(async () => {
   loadState()
   await refreshGroups()
   window.addEventListener('beforeunload', _event => cleanup())
-  addStateChangeHandlers(tabsGroups)
+  addStateChangeHandlers()
 })
 
 onUnmounted(() => {
   cleanup()
+  removeStateChangeHandlers()
 })
 
 function cleanup() {
@@ -208,56 +209,47 @@ async function handleEntrypoint() {
   }
 }
 
-function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
-  async function redrawWindow(winId: number) {
-    const win = await browser.windows.get(winId, {
-      populate: true,
+function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
+  redrawWindow(tab.windowId!)
+}
+
+function handleWinOnRemoved(windowId: number): void {
+  // TODO not working when bound bookmark should be restored
+  cleanupOnWindowClose(windowId.toString())
+}
+
+function redrawWindow(winId: number, canIdBeInvalid = false) {
+  browser.windows.get(winId, {
+    populate: true,
+  }).then(win => handleWinOnCreated(win))
+    .catch((reason) => {
+      if (!canIdBeInvalid)
+        console.error(reason)
     })
-    handleWinOnCreated(win)
-  }
+}
 
-  function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
-    // TODO very granular update for page loading. for the others maybe just render the entire group
-    console.log('onUpdated', changeInfo)
-    // TODO bug: sometimes tabInGroup is undefined
-    const tabInGroup = tabsGroups.value[tab.windowId!].tabs[tab.index]
-    if (changeInfo.favIconUrl)
-      tabInGroup.favIconUrl = changeInfo.favIconUrl
-    if (changeInfo.title) {
-      tabInGroup.title = changeInfo.title
-      tabInGroup.url = tab.url!
-    }
-    if (changeInfo.status !== 'complete')
-      return
-    tabsGroups.value[tab.windowId!].tabs[tab.index] = convertTab(tab)
-  }
+function handleWinOnCreated(win: Windows.Window): void {
+  const winId = win.id!.toString()
+  console.log('handleWinOnCreated', win)
+  tabsGroups.value[winId] = makeGroupFromWindow(winId, win.tabs ?? [])
+  // TODO hard: check if it is a bound window that was reopened
+}
 
-  function handleWinOnRemoved(windowId: number): void {
-    // TODO not working when bound bookmark should be restored
-    cleanupOnWindowClose(windowId.toString())
-  }
+function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
+  // console.log('handleTabOnRemoved', removeInfo)
+  redrawWindow(removeInfo.windowId)
+}
 
-  function handleWinOnCreated(win: Windows.Window): void {
-    const winId = win.id!.toString()
-    console.log('handleWinOnCreated', win)
-    tabsGroups.value[winId] = makeGroupFromWindow(winId, win.tabs ?? [])
-    // TODO hard: check if it is a bound window that was reopened
-  }
+function handleTabOnAttached(tabId: number, attachInfo: Tabs.OnAttachedAttachInfoType) {
+  // console.log('handleTabOnAttached', attachInfo)
+  redrawWindow(attachInfo.newWindowId)
+}
 
-  function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
-    // console.log('handleTabOnRemoved', removeInfo)
-    redrawWindow(removeInfo.windowId)
-  }
+function handleTabOnDetached(tabId: number, detachInfo: Tabs.OnDetachedDetachInfoType) {
+  redrawWindow(detachInfo.oldWindowId, true)
+}
 
-  function handleTabOnAttached(tabId: number, attachInfo: Tabs.OnAttachedAttachInfoType) {
-    // console.log('handleTabOnAttached', attachInfo)
-    redrawWindow(attachInfo.newWindowId)
-  }
-
-  function handleTabOnDetached(tabId: number, detachInfo: Tabs.OnDetachedDetachInfoType) {
-    redrawWindow(detachInfo.oldWindowId)
-  }
-
+function addStateChangeHandlers() {
   browser.tabs.onRemoved.addListener(handleTabOnRemoved)
   browser.tabs.onUpdated.addListener(handleTabOnUpdate)
   browser.tabs.onAttached.addListener(handleTabOnAttached)
@@ -266,6 +258,16 @@ function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
   browser.windows.onCreated.addListener(handleWinOnCreated)
   browser.windows.onRemoved.addListener(handleWinOnRemoved)
   // TODO add handlers for reordering
+}
+
+function removeStateChangeHandlers() {
+  browser.tabs.onRemoved.removeListener(handleTabOnRemoved)
+  browser.tabs.onUpdated.removeListener(handleTabOnUpdate)
+  browser.tabs.onAttached.removeListener(handleTabOnAttached)
+  browser.tabs.onDetached.removeListener(handleTabOnDetached)
+
+  browser.windows.onCreated.removeListener(handleWinOnCreated)
+  browser.windows.onRemoved.removeListener(handleWinOnRemoved)
 }
 
 // sidepanel api is still shit and buggy
