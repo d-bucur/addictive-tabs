@@ -212,6 +212,7 @@ function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
   function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
     // TODO very granular update for page loading. for the others maybe just render the entire group
     console.log('onUpdated', changeInfo)
+    // TODO bug: sometimes tabInGroup is undefined
     const tabInGroup = tabsGroups.value[tab.windowId!].tabs[tab.index]
     if (changeInfo.favIconUrl)
       tabInGroup.favIconUrl = changeInfo.favIconUrl
@@ -230,15 +231,22 @@ function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
   }
 
   function handleWinOnCreated(win: Windows.Window): void {
-    // TODO merge with groupsAddTab
-    // TODO need make initial group from tabs. refactor with logic above
-    tabsGroups.value[win.id!] = {
-      title: win.title ?? '',
-      tabs: [],
-    }
+    const winId = win.id!.toString()
+    console.log('handleWinOnCreated', win)
+    tabsGroups.value[winId] = makeGroupFromWindow(winId, win.tabs ?? [])
+    // TODO hard: check if it is a bound window that was reopened
   }
 
-  browser.tabs.onRemoved.addListener(() => console.log('tabs.onRemoved TODO'))
+  async function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
+    console.log('handleTabOnRemoved', removeInfo)
+    const win = await browser.windows.get(removeInfo.windowId, {
+      populate: true,
+    })
+    delete tabsGroups.value[removeInfo.windowId]
+    handleWinOnCreated(win)
+  }
+
+  browser.tabs.onRemoved.addListener(handleTabOnRemoved)
   browser.tabs.onUpdated.addListener(handleTabOnUpdate)
   browser.tabs.onAttached.addListener(() => console.log('tabs.onAttached TODO'))
   browser.tabs.onDetached.addListener(() => console.log('tabs.onDetached TODO'))
