@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Tabs } from 'webextension-polyfill'
 import { addStateChangeHandlers } from './stateChangeHandlers'
-import { convertBookmark, makeGroup } from './groupOperations'
-import type { Dictionary, Group, TabItem } from '~/composables/utils'
+import { makeGroupFromBm, makeGroupFromWindow } from './groupOperations'
+import type { Dictionary, Group } from '~/composables/utils'
 import { extractDomainName, getViewType, groupBy } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
@@ -11,6 +11,16 @@ const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
 const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
 
 const viewType = computed(getViewType)
+const groupKeysIterator = computed(() => {
+  const windows: string[] = []
+  const bms: string[] = []
+  for (const k in tabsGroups.value) {
+    if (tabsGroups.value[k].windowId)
+      windows.push(k)
+    else bms.push(k)
+  }
+  return windows.concat(bms)
+})
 
 // TODO more efficient rendering. don't clear every time but only update as necessary
 async function refreshGroups() {
@@ -21,19 +31,6 @@ async function refreshGroups() {
   await refreshBookmarks()
   await refreshActiveWindows()
   console.log('Ended refreshGroups', tabsGroups.value)
-}
-
-function groupsAddTab(key: string, tab: TabItem, title?: string) {
-  // TODO maybe remove and create groups in each caller
-  if (tabsGroups.value[key]) {
-    tabsGroups.value[key].tabs.push(tab)
-  }
-  else {
-    tabsGroups.value[key] = {
-      title: title || key,
-      tabs: [tab],
-    }
-  }
 }
 
 function getGroupTitle(winId: string, tabs: Tabs.Tab[]): string {
@@ -53,15 +50,26 @@ function getGroupTitle(winId: string, tabs: Tabs.Tab[]): string {
   return domainsSorted.slice(0, 2).join(', ')
 }
 
+function refreshBindReferences() {
+  for (const winId in bindings.windowToBookmark) {
+    if (!tabsGroups.value[winId]) {
+      delete bindings.windowToBookmark[winId]
+      continue
+      // this will not be persisted until next save
+    }
+    // console.log('Updating binding for winId', winId)
+    tabsGroups.value[winId].bookmarkId = bindings.windowToBookmark[winId]
+  }
+}
+
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
-  // console.log('tabsAPI', tabsRes)
 
   const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
   console.log('tabsGrouped', tabsGrouped)
 
   for (const [winId, tabs] of Object.entries(tabsGrouped)) {
-    const group = makeGroup(winId, tabs)
+    const group = makeGroupFromWindow(winId, tabs)
     tabsGroups.value[winId] = group
 
     // TODO refactor title logic
@@ -82,44 +90,16 @@ async function refreshActiveWindows() {
   console.log('API tabs', tabsRes)
 }
 
-function refreshBindReferences() {
-  for (const winId in bindings.windowToBookmark) {
-    if (!tabsGroups.value[winId]) {
-      delete bindings.windowToBookmark[winId]
-      continue
-      // this will not be persisted until next save
-    }
-    // console.log('Updating binding for winId', winId)
-    tabsGroups.value[winId].bookmarkId = bindings.windowToBookmark[winId]
-  }
-}
-
 async function refreshBookmarks() {
   const bmTree = await browser.bookmarks.getSubTree(BOOKMARK_TREE_ID)
-  // TODO handle edge cases for nested arrays
-  bmTree[0].children?.forEach((bmFolder) => {
-    if (bmFolder.url)
-      return
-    bmFolder.children?.forEach((bm) => {
-      const tabItem = convertBookmark(bm)
-      groupsAddTab(bmFolder.id, tabItem, bmFolder.title)
-      tabsGroups.value[bmFolder.id].bookmarkId = bmFolder.id
-    })
-  })
   console.log('API bms', bmTree)
+  for (const bmFolder of bmTree[0].children ?? []) {
+    if (!bmFolder.url)
+      tabsGroups.value[bmFolder.id] = makeGroupFromBm(bmFolder)
+  }
 }
 
-const groupKeysIterator = computed(() => {
-  const windows: string[] = []
-  const bms: string[] = []
-  for (const k in tabsGroups.value) {
-    if (tabsGroups.value[k].windowId)
-      windows.push(k)
-    else bms.push(k)
-  }
-  return windows.concat(bms)
-})
-
+// TODO rename to onBindAction
 async function handleBind(groupId: string) {
   // console.log(`Binding ${groupId}`)
   const bmFolder = await browser.bookmarks.create({

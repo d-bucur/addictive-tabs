@@ -28,7 +28,7 @@ export function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> })
     // TODO merge with groupsAddTab
     // TODO need make initial group from tabs. refactor with logic above
     tabsGroups.value[win.id!] = {
-      title: win.title || '',
+      title: win.title ?? '',
       tabs: [],
     }
   }
