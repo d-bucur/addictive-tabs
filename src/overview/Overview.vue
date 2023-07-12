@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { Bookmarks, Tabs, Windows } from 'webextension-polyfill'
+import type { Tabs } from 'webextension-polyfill'
+import { addStateChangeHandlers } from './stateChangeHandlers'
+import { convertBookmark, convertTab } from './groupOperations'
 import type { Dictionary, Group, TabItem } from '~/composables/utils'
-import { extractDomainName, faviconURL, getViewType, groupBy } from '~/composables/utils'
+import { extractDomainName, getViewType, groupBy } from '~/composables/utils'
 
 const BOOKMARK_TREE_ID = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
@@ -95,15 +97,6 @@ function refreshBindReferences() {
   }
 }
 
-function convertTab(tab: Tabs.Tab): TabItem {
-  return {
-    id: tab.id?.toString() || 'undefined', // might happen in some edge cases?
-    title: tab.title!,
-    url: tab.url!,
-    favIconUrl: tab.favIconUrl,
-  }
-}
-
 async function refreshBookmarks() {
   const bmTree = await browser.bookmarks.getSubTree(BOOKMARK_TREE_ID)
   // TODO handle edge cases for nested arrays
@@ -117,15 +110,6 @@ async function refreshBookmarks() {
     })
   })
   console.log('API bms', bmTree)
-}
-
-function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
-  return {
-    id: bm.id,
-    title: bm.title,
-    url: bm.url!,
-    favIconUrl: faviconURL(bm.url),
-  }
 }
 
 const groupKeysIterator = computed(() => {
@@ -207,6 +191,37 @@ async function handleRemove(groupId: string) {
     await browser.bookmarks.removeTree(group.bookmarkId)
 }
 
+async function handleRename(id: string, value: string) {
+  const group = tabsGroups.value[id]
+  group.title = value
+  if (group.bookmarkId) {
+    browser.bookmarks.update(group.bookmarkId, {
+      title: value,
+    })
+  }
+}
+
+onMounted(async () => {
+  await handleEntrypoint()
+  loadState()
+  await refreshGroups()
+  window.addEventListener('beforeunload', _event => cleanup())
+  addStateChangeHandlers(tabsGroups)
+})
+
+onUnmounted(() => {
+  cleanup()
+})
+
+function cleanup() {
+  console.log('Unmounting, saving state')
+  saveState()
+}
+
+function openOverviewPage() {
+  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
+}
+
 function saveState() {
   console.log('Saving state')
   localStorage.setItem('windowToBookmark', JSON.stringify(bindings.windowToBookmark))
@@ -226,77 +241,6 @@ async function handleEntrypoint() {
     document.getElementsByTagName('head')[0].insertAdjacentHTML(
       'beforeend',
       '<link rel="stylesheet" href="../background/override.css" />')
-  }
-}
-
-async function handleRename(id: string, value: string) {
-  const group = tabsGroups.value[id]
-  group.title = value
-  if (group.bookmarkId) {
-    browser.bookmarks.update(group.bookmarkId, {
-      title: value,
-    })
-  }
-}
-
-onMounted(async () => {
-  await handleEntrypoint()
-  loadState()
-  await refreshGroups()
-  window.addEventListener('beforeunload', _event => cleanup())
-  addStateChangeHandlers()
-})
-
-onUnmounted(() => {
-  cleanup()
-})
-
-function cleanup() {
-  console.log('Unmounting, saving state')
-  saveState()
-}
-
-function openOverviewPage() {
-  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
-}
-
-// TODO pass refs and move to separate file
-function addStateChangeHandlers() {
-  browser.tabs.onRemoved.addListener(() => console.log('tabs.onRemoved TODO'))
-  browser.tabs.onUpdated.addListener(handleTabOnUpdate)
-  browser.tabs.onAttached.addListener(() => console.log('tabs.onAttached TODO'))
-  browser.tabs.onDetached.addListener(() => console.log('tabs.onDetached TODO'))
-
-  browser.windows.onCreated.addListener(handleWinOnCreated)
-  browser.windows.onRemoved.addListener(handleWinOnRemoved)
-  // TODO add handlers for reordering
-}
-
-function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
-  // TODO very granular update for page loading. for the others maybe just render the entire group
-  console.log('onUpdated', changeInfo)
-  const tabInGroup = tabsGroups.value[tab.windowId!].tabs[tab.index]
-  if (changeInfo.favIconUrl)
-    tabInGroup.favIconUrl = changeInfo.favIconUrl
-  if (changeInfo.title) {
-    tabInGroup.title = changeInfo.title
-    tabInGroup.url = tab.url!
-  }
-  if (changeInfo.status !== 'complete')
-    return
-  tabsGroups.value[tab.windowId!].tabs[tab.index] = convertTab(tab)
-}
-
-function handleWinOnRemoved(windowId: number): void {
-  delete tabsGroups.value[windowId]
-}
-
-function handleWinOnCreated(win: Windows.Window): void {
-  // TODO merge with groupsAddTab
-  // TODO need make initial group from tabs. refactor with logic above
-  tabsGroups.value[win.id!] = {
-    title: win.title || '',
-    tabs: [],
   }
 }
 
