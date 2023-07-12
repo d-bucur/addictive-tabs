@@ -38,3 +38,4 @@
 - consider https://headlessui.com/ for components
 - see https://tailwindui.com/ or bootstrap for example styling
 - firefox port https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
+- save tab history to localstorage

@@ -1,3 +1,4 @@
+// TODO rename to IName
 export interface TabItem {
   id: string
   title: string

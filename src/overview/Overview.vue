@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Tabs } from 'webextension-polyfill'
 import { addStateChangeHandlers } from './stateChangeHandlers'
-import { convertBookmark, convertTab } from './groupOperations'
+import { convertBookmark, makeGroup } from './groupOperations'
 import type { Dictionary, Group, TabItem } from '~/composables/utils'
 import { extractDomainName, getViewType, groupBy } from '~/composables/utils'
 
@@ -61,14 +61,11 @@ async function refreshActiveWindows() {
   console.log('tabsGrouped', tabsGrouped)
 
   for (const [winId, tabs] of Object.entries(tabsGrouped)) {
-    for (const tab of tabs) {
-      if (tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://'))
-        continue
-      const tabItem = convertTab(tab)
-      groupsAddTab(winId, tabItem)
-    }
-    tabsGroups.value[winId].title = getGroupTitle(winId, tabs)
+    const group = makeGroup(winId, tabs)
+    tabsGroups.value[winId] = group
+
     // TODO refactor title logic
+    tabsGroups.value[winId].title = getGroupTitle(winId, tabs)
     let title = null
     const boundBmId = bindings.windowToBookmark[winId]
     if (boundBmId) {

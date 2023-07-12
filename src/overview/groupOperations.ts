@@ -1,5 +1,6 @@
 import type { Bookmarks, Tabs } from 'webextension-polyfill'
-import { type TabItem, faviconURL } from '~/composables/utils'
+import { faviconURL } from '~/composables/utils'
+import type { Group, TabItem } from '~/composables/utils'
 
 export function convertTab(tab: Tabs.Tab): TabItem {
   return {
@@ -17,4 +18,20 @@ export function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
     url: bm.url!,
     favIconUrl: faviconURL(bm.url),
   }
+}
+
+export function makeGroup(winId: string, tabs: Tabs.Tab[]): Group {
+  const group: Group = {
+    title: winId,
+    tabs: tabs.reduce((a: TabItem[], tab) => {
+      if (!isIgnoredTab(tab))
+        a.push(convertTab(tab))
+      return a
+    }, []),
+  }
+  return group
+}
+
+function isIgnoredTab(tab: Tabs.Tab) {
+  return tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://')
 }

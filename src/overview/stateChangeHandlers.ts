@@ -2,7 +2,6 @@ import type { Tabs, Windows } from 'webextension-polyfill'
 import { convertTab } from './groupOperations'
 import type { Dictionary, Group } from '~/composables/utils'
 
-// TODO pass refs and move to separate file
 export function addStateChangeHandlers(tabsGroups: { value: Dictionary<Group> }) {
   function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
     // TODO very granular update for page loading. for the others maybe just render the entire group
