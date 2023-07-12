@@ -9,7 +9,6 @@
 - add recalculating name on group change
   
 - BUG: autoname should only work if there is no other name to use
-- BUG: archive doesn't refresh the created bookmark
 - BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
 
 ## possibly critical before release

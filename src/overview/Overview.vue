@@ -73,7 +73,6 @@ async function refreshBookmarks() {
   }
 }
 
-// TODO rename to onBindAction
 async function handleBind(groupId: string) {
   // console.log(`Binding ${groupId}`)
   const bmFolder = await browser.bookmarks.create({
@@ -125,13 +124,15 @@ async function closeWindow(winId: string) {
   delete tabsGroups.value[winId]
 }
 
-async function handleArchive(groupId: string) {
+async function handleArchive(winId: string) {
   // maybe not great idea to call handlers directly?
-  if (!bindings.windowToBookmark[groupId])
-    await handleBind(groupId)
-  await handlePersist(groupId)
-  await closeWindow(groupId)
-  // TODO bug: just bookmaked folder does not re-render, should be solved with state change handlers
+  if (!bindings.windowToBookmark[winId])
+    await handleBind(winId)
+  await handlePersist(winId)
+  const group = tabsGroups.value[winId]
+  group.windowId = undefined
+  tabsGroups.value[group.bookmarkId!] = group
+  await closeWindow(winId)
 }
 
 async function handleRemove(groupId: string) {
