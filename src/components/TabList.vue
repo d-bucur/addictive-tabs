@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import type { Group } from '~/composables/utils'
+import IcRoundInsertLink from '~icons/ic/round-insert-link'
+import MaterialSymbolsDeleteOutlineRounded from '~icons/material-symbols/delete-outline-rounded'
+import IcBaselineSaveAlt from '~icons/ic/baseline-save-alt'
+import IcBaselineSave from '~icons/ic/baseline-save'
+import MaterialSymbolsUpload from '~icons/material-symbols/upload'
+import StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink from '~icons/streamline/interface-link-broken-break-broken-hyperlink-link-remove-unlink'
 
 const props = defineProps<{
   id: string
@@ -32,23 +38,30 @@ onMounted(() => console.log('Updating list', props.groupData))
       <input bg-transparent :value="groupData.title" @change="titleUpdateHandler">
     </div>
     <div flex flex-row gap-1em mla p-1>
-      <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" @click="emit('bind', id)">
-        Bind
+      <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
+        <IcRoundInsertLink />
+        <!-- Bind -->
       </button>
-      <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" @click="emit('persist', id)">
-        Persist
+      <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" title="Persist" @click="emit('persist', id)">
+        <!-- Persist -->
+        <IcBaselineSave />
       </button>
-      <button v-if="groupData.windowId" class="btn" @click="emit('archive', id)">
-        Archive
+      <button v-if="groupData.windowId" class="btn" title="Archive" @click="emit('archive', id)">
+        <!-- Archive -->
+        <IcBaselineSaveAlt />
       </button>
-      <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" @click="emit('unbind', id)">
-        Unbind
+      <button v-if="groupData.windowId && groupData.bookmarkId" title="Unbind" class="btn" @click="emit('unbind', id)">
+        <!-- Unbind -->
+        <StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink />
       </button>
-      <button v-if="groupData.bookmarkId && !groupData.windowId" class="btn" @click="emit('restore', id)">
-        Restore
+      <button v-if="groupData.bookmarkId && !groupData.windowId" class="btn" title="Restore" @click="emit('restore', id)">
+        <!-- Restore -->
+        <MaterialSymbolsUpload />
       </button>
-      <button class="btn" @click="emit('remove', id)">
-        X Remove
+      <button class="btn" title="Remove" @click="emit('remove', id)">
+        <!-- <span i-material-symbols-delete-outline-rounded text-3rem>a</span> -->
+        <MaterialSymbolsDeleteOutlineRounded />
+        <!-- Remove -->
       </button> <!-- TODO add confirmation -->
     </div>
     <ul p-2 overflow-auto>

@@ -190,6 +190,7 @@ function openOverviewPage() {
 function saveState() {
   console.log('Saving state')
   localStorage.setItem('windowToBookmark', JSON.stringify(bindings.windowToBookmark))
+  // maybe use https://vueuse.org/core/useLocalStorage/ instead?
 }
 
 function loadState() {
