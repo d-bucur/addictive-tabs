@@ -53,15 +53,19 @@ async function refreshActiveWindows() {
   const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
   console.log('tabsGrouped', tabsGrouped)
 
-  for (const [winId, tabs] of Object.entries(tabsGrouped)) {
-    const group = makeGroupFromWindow(winId, tabs)
-    const boundBmId = bindings.windowToBookmark[winId]
-    group.title = boundBmId
-      ? tabsGroups.value[boundBmId].title
-      : makeGroupTitle(group)
-    tabsGroups.value[winId] = group
-  }
+  for (const [winId, tabs] of Object.entries(tabsGrouped))
+    refreshWindow(winId, tabs)
+
   console.log('API tabs', tabsRes)
+}
+
+function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
+  const group = makeGroupFromWindow(winId, tabs)
+  const boundBmId = bindings.windowToBookmark[winId]
+  group.title = boundBmId
+    ? tabsGroups.value[boundBmId].title
+    : makeGroupTitle(group)
+  tabsGroups.value[winId] = group
 }
 
 async function refreshBookmarks() {
@@ -230,9 +234,7 @@ function redrawWindow(winId: number, canIdBeInvalid = false) {
 }
 
 function handleWinOnCreated(win: Windows.Window): void {
-  const winId = win.id!.toString()
-  // console.log('handleWinOnCreated', win)
-  tabsGroups.value[winId] = makeGroupFromWindow(winId, win.tabs ?? [])
+  refreshWindow(win.id!.toString(), win.tabs ?? [])
   // TODO hard: check if it is a bound window that was reopened
 }
 
