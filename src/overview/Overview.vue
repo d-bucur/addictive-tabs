@@ -95,10 +95,10 @@ async function handlePersist(groupId: string) {
   const bmFolder = bindings.windowToBookmark[groupId]
   const currentBookmarks = await browser.bookmarks.getSubTree(bmFolder)
   console.log('Removing', currentBookmarks)
-  currentBookmarks[0].children?.forEach(bm => browser.bookmarks.remove(bm.id))
+  currentBookmarks[0].children?.forEach(async bm => await browser.bookmarks.remove(bm.id))
 
   for (const tab of tabsGroups.value[groupId].tabs) {
-    browser.bookmarks.create({
+    await browser.bookmarks.create({
       title: tab.title,
       url: tab.url,
       parentId: bmFolder,
@@ -149,9 +149,11 @@ async function handleArchive(winId: string) {
 }
 
 async function createGroupFromBookmark(bmId: string) {
-  const bm = await browser.bookmarks.get(bmId)
+  // using separate queries because API returns empty children if bm folder just created
+  const bm = (await browser.bookmarks.get(bmId))[0]
+  bm.children = await browser.bookmarks.getChildren(bmId)
   console.log('refreshing bookmark', bm)
-  tabsGroups.value[bmId] = makeGroupFromBm(bm[0])
+  tabsGroups.value[bmId] = makeGroupFromBm(bm)
 }
 
 async function handleRemove(groupId: string) {
@@ -283,17 +285,6 @@ function removeStateChangeHandlers() {
   browser.windows.onCreated.removeListener(handleWinOnCreated)
   browser.windows.onRemoved.removeListener(handleWinOnRemoved)
 }
-
-// sidepanel api is still shit and buggy
-// async function openSidePanel() {
-//   await browser.sidePanel.open({
-//     windowId: await browser.windows.getCurrent(),
-//   })
-//   await browser.sidePanel.setOptions({
-//     enabled: true,
-//     path: './dist/overview/index.html',
-//   })
-// }
 </script>
 
 <template>

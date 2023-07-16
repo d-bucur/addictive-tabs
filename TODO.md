@@ -1,13 +1,13 @@
 ## wip
+- bug: archive
 - some bugs with operations and bindinds
-- BUG: autoname not working at all
-- BUG: autoname should only work if there is no other name to use
-- recalculate name on group change
+- remove most usages of refreshGroups
   
 ## first release (can release to store and use personally)
 - create root bm folder under other bookmarks (like Tabli)
 - bindings do not persist between browser reloads as windows change ids
 - BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
+- maybe better to keep bookmars in structure and not render them?
 
 ## possibly critical before release
 - handle case where window ids and bm ids can collide
