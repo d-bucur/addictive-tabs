@@ -46,7 +46,7 @@ function isIgnoredTab(tab: Tabs.Tab) {
 
 export function makeGroupTitle(group: Group) {
   // otherwise compute from existing tabs
-  const domains = groupBy(group.tabs, t => extractDomainName(t.url!))
+  const domains = groupBy(group.tabs, t => t.url ? extractDomainName(t.url) : 'others')
   // sort by number of entries
   const domainsSorted = Object.keys(domains).sort((l, r) => domains[r].length - domains[l].length)
   return domainsSorted.slice(0, 2).join(', ')

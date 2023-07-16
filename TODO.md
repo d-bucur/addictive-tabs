@@ -10,6 +10,7 @@
 - BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
 
 ## possibly critical before release
+- handle case where window ids and bm ids can collide
 - cleanup folders, decide which tests to keep
 - refactor overview js and separate into modules
 - unocss isn't that great, maybe remove it

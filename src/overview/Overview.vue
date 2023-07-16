@@ -59,11 +59,11 @@ async function refreshActiveWindows() {
   console.log('API tabs', tabsRes)
 }
 
-function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
+async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
   const group = makeGroupFromWindow(winId, tabs)
   const boundBmId = bindings.windowToBookmark[winId]
   group.title = boundBmId
-    ? tabsGroups.value[boundBmId].title
+    ? (await browser.bookmarks.get(boundBmId))[0].title
     : makeGroupTitle(group)
   tabsGroups.value[winId] = group
 }
