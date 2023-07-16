@@ -65,7 +65,9 @@ async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
   group.title = boundBmId
     ? (await browser.bookmarks.get(boundBmId))[0].title
     : makeGroupTitle(group)
+  group.bookmarkId = boundBmId
   tabsGroups.value[winId] = group
+  // console.log('Refreshed group', group)
 }
 
 async function refreshBookmarks() {
@@ -105,13 +107,16 @@ async function handlePersist(groupId: string) {
 }
 
 async function handleRestore(groupId: string) {
+  const bmGroup = tabsGroups.value[groupId]
   const window = await browser.windows.create({
-    url: tabsGroups.value[groupId].tabs.map(t => t.url),
+    url: bmGroup.tabs.map(t => t.url),
   })
   const winId = window.id!.toString()
-  bindings.windowToBookmark[winId] = tabsGroups.value[groupId].bookmarkId!
+  bindings.windowToBookmark[winId] = bmGroup.bookmarkId!
   saveState()
-  await refreshGroups()
+  tabsGroups.value[winId].bookmarkId = groupId
+  console.log('handleRestore done', tabsGroups.value[winId])
+  delete tabsGroups.value[groupId]
 }
 
 async function handleUnbind(groupId: string) {
@@ -192,7 +197,7 @@ function openOverviewPage() {
 }
 
 function saveState() {
-  console.log('Saving state')
+  console.log('Saving state', bindings.windowToBookmark)
   localStorage.setItem('windowToBookmark', JSON.stringify(bindings.windowToBookmark))
   // maybe use https://vueuse.org/core/useLocalStorage/ instead?
 }
