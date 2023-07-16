@@ -7,7 +7,7 @@ export function convertTab(tab: Tabs.Tab): TabItem {
     id: tab.id?.toString() ?? 'undefined', // might happen in some edge cases?
     title: tab.title!,
     url: tab.url!,
-    favIconUrl: tab.favIconUrl,
+    favIconUrl: faviconURL(tab.url),
   }
 }
 
@@ -49,5 +49,5 @@ export function makeGroupTitle(group: Group) {
   const domains = groupBy(group.tabs, t => t.url ? extractDomainName(t.url) : 'others')
   // sort by number of entries
   const domainsSorted = Object.keys(domains).sort((l, r) => domains[r].length - domains[l].length)
-  return domainsSorted.slice(0, 2).join(', ')
+  return domainsSorted.length ? domainsSorted.slice(0, 2).join(', ') : 'empty'
 }

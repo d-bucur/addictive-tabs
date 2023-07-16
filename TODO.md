@@ -1,5 +1,5 @@
 ## wip
-- some bugs with operations and bindinds
+- some bugs with operations and bindings
   
 ## first release (can release to store and use personally)
 - custom window names do not persist on reload
@@ -13,13 +13,13 @@
 ## possibly critical before release
 - flickering when refreshing page. check number of redraws
 - refactor overview js and separate into modules
+- order windows by last used and maybe divide windows and bookmarks into separate categories
 - unocss isn't that great, maybe remove it
 - move ownership of groups to background script so updated can happen in the bg
 - auto sync (needs details)
 - change root bm folder and edge cases
 
 ## nice to have
-- order windows by last used and maybe divide windows and bookmarks into separate categories
 - click individual tabs
 - drag & drop functionality
 - hover over item to see address
@@ -30,6 +30,7 @@
 ## post release
 - abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
 - chrome groups support: one level of bm folder nesting maps to group
+- icon for which tabs have changed compared to bookmark
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
 - consider https://headlessui.com/ for components
@@ -37,3 +38,13 @@
 - save tab history to localstorage
 - firefox port when manifest 3 is ready https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
 - masonry grid for groups. or wait for grid implementation
+
+
+## operations status
+- bind: ok
+- unbind: ok
+- persist: ok
+- archive: ok
+- restore: ok
+- delete: ok
+- rename: ok

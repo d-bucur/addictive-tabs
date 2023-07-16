@@ -131,14 +131,14 @@ async function handleUnbind(groupId: string) {
 async function closeWindow(winId: string) {
   await browser.windows.remove(parseInt(winId))
   // note: tabs will still be returned from API at this point
-  cleanupOnWindowClose(winId)
+  await cleanupOnWindowClose(winId)
 }
 
-function cleanupOnWindowClose(winId: string) {
+async function cleanupOnWindowClose(winId: string) {
   const bmId = bindings.windowToBookmark[winId]
   if (bmId) {
     delete bindings.windowToBookmark[winId]
-    createGroupFromBookmark(bmId)
+    await createGroupFromBookmark(bmId)
   }
   delete tabsGroups.value[winId]
 }
@@ -229,9 +229,9 @@ function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoTy
   redrawWindow(tab.windowId!)
 }
 
-function handleWinOnRemoved(windowId: number): void {
+async function handleWinOnRemoved(windowId: number) {
   // TODO not working when bound bookmark should be restored
-  cleanupOnWindowClose(windowId.toString())
+  await cleanupOnWindowClose(windowId.toString())
 }
 
 function redrawWindow(winId: number, canIdBeInvalid = false) {
@@ -251,7 +251,7 @@ function handleWinOnCreated(win: Windows.Window): void {
 
 function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
   // console.log('handleTabOnRemoved', removeInfo)
-  redrawWindow(removeInfo.windowId)
+  redrawWindow(removeInfo.windowId, true)
 }
 
 function handleTabOnAttached(tabId: number, attachInfo: Tabs.OnAttachedAttachInfoType) {
