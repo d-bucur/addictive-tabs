@@ -21,27 +21,26 @@ const groupKeysIterator = computed(() => {
   return windows.concat(bms)
 })
 
-// TODO more efficient rendering. don't clear every time but only update as necessary
 async function refreshGroups() {
   // TODO perf check if this renders multiple times. if so, use buffer
   // TODO there can be a race condition here when triggered by multiple tabs (ie restoring a window)
-  console.log('Starting refreshGroups')
+  // console.log('Starting refreshGroups')
   tabsGroups.value = {}
   await refreshBookmarks()
   await refreshActiveWindows()
   refreshBindReferences()
-  console.log('Ended refreshGroups', tabsGroups.value)
+  // console.log('Ended refreshGroups', tabsGroups.value)
 }
 
 function refreshBindReferences() {
   for (const winId in bindings.windowToBookmark) {
-    if (!tabsGroups.value[winId]) {
+    if (!(winId in tabsGroups.value)) {
+      // prune old window values
+      // this will not be persisted until next save
       delete bindings.windowToBookmark[winId]
       continue
-      // this will not be persisted until next save
     }
     const bmId = bindings.windowToBookmark[winId]
-    // console.log('Updating binding for winId', winId)
     tabsGroups.value[winId].bookmarkId = bmId
     delete tabsGroups.value[bmId]
   }
@@ -51,22 +50,25 @@ async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
 
   const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
-  console.log('tabsGrouped', tabsGrouped)
+  // console.log('tabsGrouped', tabsGrouped)
 
   for (const [winId, tabs] of Object.entries(tabsGrouped))
-    refreshWindow(winId, tabs)
+    await refreshWindow(winId, tabs)
 
-  console.log('API tabs', tabsRes)
+  // console.log('API tabs', tabsRes)
 }
 
 async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
+  // console.log('refreshing window', winId)
   const group = makeGroupFromWindow(winId, tabs)
   const boundBmId = bindings.windowToBookmark[winId]
-  group.title = boundBmId
-    ? (await browser.bookmarks.get(boundBmId))[0].title
-    : makeGroupTitle(group)
+  if (boundBmId)
+    group.title = (await browser.bookmarks.get(boundBmId))[0].title
+  else
+    group.title = makeGroupTitle(group)
   group.bookmarkId = boundBmId
   tabsGroups.value[winId] = group
+  // console.log('refreshWindow group keys', Object.keys(tabsGroups.value))
   // console.log('Refreshed group', group)
 }
 
@@ -91,10 +93,10 @@ async function handleBind(winId: string) {
 }
 
 async function handlePersist(groupId: string) {
-  console.log('Persisting')
+  // console.log('Persisting')
   const bmFolder = bindings.windowToBookmark[groupId]
   const currentBookmarks = await browser.bookmarks.getSubTree(bmFolder)
-  console.log('Removing', currentBookmarks)
+  // console.log('Removing', currentBookmarks)
   currentBookmarks[0].children?.forEach(async bm => await browser.bookmarks.remove(bm.id))
 
   for (const tab of tabsGroups.value[groupId].tabs) {
@@ -115,7 +117,7 @@ async function handleRestore(groupId: string) {
   bindings.windowToBookmark[winId] = bmGroup.bookmarkId!
   saveState()
   tabsGroups.value[winId].bookmarkId = groupId
-  console.log('handleRestore done', tabsGroups.value[winId])
+  // console.log('handleRestore done', tabsGroups.value[winId])
   delete tabsGroups.value[groupId]
 }
 
@@ -193,7 +195,7 @@ onUnmounted(() => {
 })
 
 function cleanup() {
-  console.log('Unmounting, saving state')
+  // console.log('Unmounting, saving state')
   saveState()
 }
 
@@ -218,7 +220,7 @@ function loadState() {
 async function handleEntrypoint() {
   // sidebar entry, query params would be nicer but not possible in manifest
   if (viewType.value === 'sidebar') {
-    console.log('loading other style')
+    // console.log('loading other style')
     document.getElementsByTagName('head')[0].insertAdjacentHTML(
       'beforeend',
       '<link rel="stylesheet" href="../background/override.css" />')

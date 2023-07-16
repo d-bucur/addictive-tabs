@@ -1,5 +1,4 @@
 ## wip
-- windows unbind on reload
 - some bugs with operations and bindinds
   
 ## first release (can release to store and use personally)

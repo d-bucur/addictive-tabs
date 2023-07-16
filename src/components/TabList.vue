@@ -21,7 +21,7 @@ const isWindow = computed(() => props.groupData.windowId && !props.groupData.boo
 // @ts-expect-error: value exists on event
 const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.value)
 
-onMounted(() => console.log('Updating list', props.groupData))
+// onMounted(() => console.log('Updating list', props.groupData))
 </script>
 
 <template>
