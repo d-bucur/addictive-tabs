@@ -4,7 +4,7 @@ import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOpe
 import type { Dictionary, Group } from '~/composables/utils'
 import { getViewType, groupBy } from '~/composables/utils'
 
-const BOOKMARK_TREE_ID = '1'
+let bookmarkRootId = '1'
 const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
 // binding is duplicated inside groups. any way to refactor this?
 const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
@@ -46,14 +46,13 @@ function refreshBindReferences() {
 
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
+  console.log('API tabs', tabsRes)
 
   const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
   // console.log('tabsGrouped', tabsGrouped)
 
   for (const [winId, tabs] of Object.entries(tabsGrouped))
     await refreshWindow(winId, tabs)
-
-  // console.log('API tabs', tabsRes)
 }
 
 async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
@@ -71,7 +70,7 @@ async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
 }
 
 async function refreshBookmarks() {
-  const bmTree = await browser.bookmarks.getSubTree(BOOKMARK_TREE_ID)
+  const bmTree = await browser.bookmarks.getSubTree(bookmarkRootId)
   // console.log('API bms', bmTree)
   for (const bmFolder of bmTree[0].children ?? []) {
     if (!bmFolder.url)
@@ -82,7 +81,7 @@ async function refreshBookmarks() {
 async function handleBind(winId: string) {
   // console.log(`Binding ${groupId}`)
   const bmFolder = await browser.bookmarks.create({
-    parentId: BOOKMARK_TREE_ID,
+    parentId: bookmarkRootId,
     title: tabsGroups.value[winId].title,
   })
   bindings.windowToBookmark[winId] = bmFolder.id
@@ -180,6 +179,7 @@ async function handleRename(id: string, value: string) {
 }
 
 onMounted(async () => {
+  bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
   await handleEntrypoint()
   loadState()
   await refreshGroups()
@@ -230,14 +230,13 @@ function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoTy
 }
 
 async function handleWinOnRemoved(windowId: number) {
-  // TODO not working when bound bookmark should be restored
   await cleanupOnWindowClose(windowId.toString())
 }
 
-function redrawWindow(winId: number, canIdBeInvalid = false) {
+async function redrawWindow(winId: number, canIdBeInvalid = false) {
   browser.windows.get(winId, {
     populate: true,
-  }).then(win => handleWinOnCreated(win))
+  }).then(async win => await refreshWindow(winId.toString(), win.tabs ?? []))
     .catch((reason) => {
       if (!canIdBeInvalid)
         console.error(reason)
@@ -246,6 +245,7 @@ function redrawWindow(winId: number, canIdBeInvalid = false) {
 
 function handleWinOnCreated(win: Windows.Window): void {
   refreshWindow(win.id!.toString(), win.tabs ?? [])
+  // console.log('created window', win)
   // TODO hard: check if it is a bound window that was reopened
 }
 
