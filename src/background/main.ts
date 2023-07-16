@@ -5,12 +5,9 @@ import type { Tabs } from 'webextension-polyfill'
 if (import.meta.hot) {
   // @ts-expect-error for background HMR
   import('/@vite/client')
-  // load latest content script
-  import('./contentScriptHMR')
 }
 
 browser.runtime.onInstalled.addListener((): void => {
-  // eslint-disable-next-line no-console
   console.log('Extension installed')
 })
 
@@ -34,7 +31,6 @@ browser.tabs.onActivated.addListener(async ({ tabId }) => {
     return
   }
 
-  // eslint-disable-next-line no-console
   console.log('previous tab', tab)
   sendMessage('tab-prev', { title: tab.title }, { context: 'content-script', tabId })
 })

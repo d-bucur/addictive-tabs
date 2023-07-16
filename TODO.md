@@ -1,5 +1,5 @@
 ## wip
-- some bugs with operations and bindings
+
   
 ## first release (can release to store and use personally)
 - custom window names do not persist on reload
@@ -11,6 +11,7 @@
 - cleanup folders, decide which tests to keep
 
 ## possibly critical before release
+- remove sidebar until more stable
 - flickering when refreshing page. check number of redraws
 - refactor overview js and separate into modules
 - order windows by last used and maybe divide windows and bookmarks into separate categories
