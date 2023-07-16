@@ -22,8 +22,6 @@ const groupKeysIterator = computed(() => {
 })
 
 async function refreshGroups() {
-  // TODO perf check if this renders multiple times. if so, use buffer
-  // TODO there can be a race condition here when triggered by multiple tabs (ie restoring a window)
   // console.log('Starting refreshGroups')
   tabsGroups.value = {}
   await refreshBookmarks()
@@ -278,7 +276,6 @@ function addStateChangeHandlers() {
 
   browser.windows.onCreated.addListener(handleWinOnCreated)
   browser.windows.onRemoved.addListener(handleWinOnRemoved)
-  // TODO add handlers for reordering
 }
 
 function removeStateChangeHandlers() {

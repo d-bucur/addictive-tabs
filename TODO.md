@@ -2,14 +2,16 @@
 - some bugs with operations and bindinds
   
 ## first release (can release to store and use personally)
+- custom window names do not persist on reload
 - create root bm folder under other bookmarks (like Tabli)
 - bindings do not persist between browser reloads as windows change ids
 - BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
 - maybe better to keep bookmars in structure and not render them?
-
-## possibly critical before release
 - handle case where window ids and bm ids can collide
 - cleanup folders, decide which tests to keep
+
+## possibly critical before release
+- flickering when refreshing page. check number of redraws
 - refactor overview js and separate into modules
 - unocss isn't that great, maybe remove it
 - move ownership of groups to background script so updated can happen in the bg
