@@ -72,7 +72,7 @@ async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
 
 async function refreshBookmarks() {
   const bmTree = await browser.bookmarks.getSubTree(BOOKMARK_TREE_ID)
-  console.log('API bms', bmTree)
+  // console.log('API bms', bmTree)
   for (const bmFolder of bmTree[0].children ?? []) {
     if (!bmFolder.url)
       tabsGroups.value[bmFolder.id] = makeGroupFromBm(bmFolder)
@@ -120,9 +120,12 @@ async function handleRestore(groupId: string) {
 }
 
 async function handleUnbind(groupId: string) {
+  const bmId = bindings.windowToBookmark[groupId]
   delete bindings.windowToBookmark[groupId]
   saveState()
-  await refreshGroups()
+  delete tabsGroups.value[groupId].bookmarkId
+  createGroupFromBookmark(bmId)
+  // await refreshGroups()
 }
 
 async function closeWindow(winId: string) {
@@ -152,7 +155,7 @@ async function createGroupFromBookmark(bmId: string) {
   // using separate queries because API returns empty children if bm folder just created
   const bm = (await browser.bookmarks.get(bmId))[0]
   bm.children = await browser.bookmarks.getChildren(bmId)
-  console.log('refreshing bookmark', bm)
+  // console.log('refreshing bookmark', bm)
   tabsGroups.value[bmId] = makeGroupFromBm(bm)
 }
 
@@ -206,9 +209,10 @@ function saveState() {
 
 function loadState() {
   const loaded = localStorage.getItem('windowToBookmark')
-  if (loaded)
+  if (loaded) {
     bindings.windowToBookmark = JSON.parse(loaded)
-    // console.log('Found state, loading')
+    console.log('Loading state', loaded)
+  }
 }
 
 async function handleEntrypoint() {

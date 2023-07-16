@@ -1,7 +1,6 @@
 ## wip
-- bug: archive
+- windows unbind on reload
 - some bugs with operations and bindinds
-- remove most usages of refreshGroups
   
 ## first release (can release to store and use personally)
 - create root bm folder under other bookmarks (like Tabli)
