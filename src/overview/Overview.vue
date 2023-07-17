@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { type Tabs, type Windows } from 'webextension-polyfill'
-import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
+import { isIgnoredTab, makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
 import type { Dictionary, Group } from '~/composables/utils'
-import { ListTypeEnum, getViewType, groupBy } from '~/composables/utils'
+import { ListTypeEnum, groupBy } from '~/composables/utils'
 
 let bookmarkRootId = '1'
 const groups: { open: Dictionary<Group>; archived: Dictionary<Group> } = reactive({ open: {}, archived: {} })
 // binding is duplicated inside groups. any way to refactor this?
 const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
-
-const viewType = computed(getViewType)
 
 onMounted(async () => {
   bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
@@ -45,7 +43,7 @@ async function refreshBookmarks() {
 
 async function refreshActiveWindows() {
   const tabsRes = await browser.tabs.query({})
-  console.log('API tabs', tabsRes)
+  // console.log('API tabs', tabsRes)
 
   const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
   // console.log('tabsGrouped', tabsGrouped)
@@ -55,6 +53,7 @@ async function refreshActiveWindows() {
 }
 
 async function refreshWindowFromTabs(winId: string, tabs: Tabs.Tab[]) {
+  // console.log('Refreshing window', winId)
   // console.log('refreshing window', winId)
   const group = makeGroupFromWindow(winId, tabs)
   const boundBmId = bindings.windowToBookmark[winId]
@@ -207,30 +206,36 @@ function cleanup() {
 }
 
 function saveState() {
-  console.log('Saving state', bindings.windowToBookmark)
+  // console.log('Saving state', bindings.windowToBookmark)
   localStorage.setItem('windowToBookmark', JSON.stringify(bindings.windowToBookmark))
   // maybe use https://vueuse.org/core/useLocalStorage/ instead?
 }
 
 function loadState() {
   const loaded = localStorage.getItem('windowToBookmark')
-  if (loaded) {
+  if (loaded)
     bindings.windowToBookmark = JSON.parse(loaded)
-    console.log('Loading state', loaded)
-  }
+    // console.log('Loading state', loaded)
 }
 
 function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
+  const skipUpdate = isIgnoredTab(tab)
+  // normally 4 updates are sent per page load, but removing some feels like premature optimization
+  // || (changeInfo.status !== 'loading' && changeInfo.status !== 'complete')
+  if (skipUpdate)
+    return
+  // console.log('handleTabOnUpdate', tabId, changeInfo)
   refreshWindowFromId(tab.windowId!)
 }
 
 async function handleWinOnRemoved(windowId: number) {
+  // console.log('handleWinOnRemoved', windowId)
   await cleanupOnWindowClose(windowId.toString())
 }
 
 function handleWinOnCreated(win: Windows.Window): void {
+  // console.log('handleWinOnCreated', win)
   refreshWindowFromTabs(win.id!.toString(), win.tabs ?? [])
-  // console.log('created window', win)
   // TODO hard: check if it is a bound window that was reopened
 }
 
@@ -245,10 +250,12 @@ function handleTabOnAttached(tabId: number, attachInfo: Tabs.OnAttachedAttachInf
 }
 
 function handleTabOnDetached(tabId: number, detachInfo: Tabs.OnDetachedDetachInfoType) {
+  // console.log('handleTabOnDetached', detachInfo)
   refreshWindowFromId(detachInfo.oldWindowId, true)
 }
 
 function handleTabOnMoved(tabId: number, moveInfo: Tabs.OnMovedMoveInfoType) {
+  // console.log('handleTabOnMoved', moveInfo)
   refreshWindowFromId(moveInfo.windowId)
 }
 

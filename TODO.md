@@ -2,7 +2,6 @@
 
 ## first release (can release to store and use personally)
 - refactor overview js and separate into modules. maybe extract groups to class
-- flickering when refreshing page. check number of redraws
 - remove unocss
 
 ## post release
@@ -39,5 +38,5 @@
 - persist: ok
 - archive: ok
 - restore: ok
-- delete: bounded window leaves open empty group
+- delete: bounded window leaves bookmarked group
 - rename: ok

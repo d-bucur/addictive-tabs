@@ -40,7 +40,7 @@ export function makeGroupFromBm(bmFolder: Bookmarks.BookmarkTreeNode): Group {
   }
 }
 
-function isIgnoredTab(tab: Tabs.Tab) {
+export function isIgnoredTab(tab: Tabs.Tab) {
   return tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://')
 }
 
