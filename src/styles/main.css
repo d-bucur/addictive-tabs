@@ -25,3 +25,14 @@ body,
     hover:opacity-100 hover:text-teal-600;
   font-size: 0.9em;
 }
+
+/* for sidebar */
+@media (max-width: 500px) {
+  :root {
+    --app-min-width: 1px !important;
+  }
+  
+  .tab-group-card {
+    width: 100% !important;
+  }
+}

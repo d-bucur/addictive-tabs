@@ -13,7 +13,6 @@ const viewType = computed(getViewType)
 
 onMounted(async () => {
   bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
-  await checkEntrypoint()
   loadState()
   await refreshView()
   window.addEventListener('beforeunload', _event => cleanup())
@@ -221,16 +220,6 @@ function loadState() {
   }
 }
 
-async function checkEntrypoint() {
-  // sidebar entry, query params would be nicer but not possible in manifest
-  if (viewType.value === 'sidebar') {
-    // console.log('loading other style')
-    document.getElementsByTagName('head')[0].insertAdjacentHTML(
-      'beforeend',
-      '<link rel="stylesheet" href="../background/override.css" />')
-  }
-}
-
 function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
   refreshWindowFromId(tab.windowId!)
 }
@@ -289,7 +278,7 @@ function removeStateChangeHandlers() {
 <template>
   <main class="px-4 py-5 text-center" flex flex-col>
     <div>
-      <button v-if="viewType !== 'tab'" class="btn mt-2" @click="openOverviewPage">
+      <button class="btn mt-2" @click="openOverviewPage">
         Full
       </button>
       <!-- <button class="btn mt-2" @click="openSidePanel">
