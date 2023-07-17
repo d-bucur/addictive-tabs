@@ -1,17 +1,5 @@
 <script setup lang="ts">
 import type { Group, ListTypeEnum } from '~/composables/utils'
-// @ts-expect-error: ts is
-import IcRoundInsertLink from '~icons/ic/round-insert-link'
-// @ts-expect-error: still missing
-import MaterialSymbolsDeleteOutlineRounded from '~icons/material-symbols/delete-outline-rounded'
-// @ts-expect-error: block ignore
-import IcBaselineSaveAlt from '~icons/ic/baseline-save-alt'
-// @ts-expect-error: after
-import IcBaselineSave from '~icons/ic/baseline-save'
-// @ts-expect-error: 6 years
-import MaterialSymbolsUpload from '~icons/material-symbols/upload'
-// @ts-expect-error: https://github.com/Microsoft/TypeScript/issues/19573
-import StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink from '~icons/streamline/interface-link-broken-break-broken-hyperlink-link-remove-unlink'
 
 const props = defineProps<{
   id: string
@@ -46,28 +34,28 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
     </div>
     <div flex flex-row gap-1em mla p-1>
       <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
-        <IcRoundInsertLink />
+        <ic-round-insert-link />
         <!-- Bind -->
       </button>
       <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" title="Persist" @click="emit('persist', id)">
         <!-- Persist -->
-        <IcBaselineSave />
+        <ic-baseline-save />
       </button>
       <button v-if="groupData.windowId" class="btn" title="Archive" @click="emit('archive', id)">
         <!-- Archive -->
-        <IcBaselineSaveAlt />
+        <ic-baseline-save-alt />
       </button>
       <button v-if="groupData.windowId && groupData.bookmarkId" title="Unbind" class="btn" @click="emit('unbind', id)">
         <!-- Unbind -->
-        <StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink />
+        <streamline-interface-link-broken-break-broken-hyperlink-link-remove-unlink />
       </button>
       <button v-if="groupData.bookmarkId && !groupData.windowId" class="btn" title="Restore" @click="emit('restore', id)">
         <!-- Restore -->
-        <MaterialSymbolsUpload />
+        <material-symbols-upload />
       </button>
       <button class="btn" title="Remove" @click="emit('remove', id, props.type)">
         <!-- <span i-material-symbols-delete-outline-rounded text-3rem>a</span> -->
-        <MaterialSymbolsDeleteOutlineRounded />
+        <material-symbols-delete-outline-rounded />
         <!-- Remove -->
       </button> <!-- TODO add confirmation -->
     </div>
