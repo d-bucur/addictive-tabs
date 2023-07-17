@@ -1,11 +1,9 @@
 ## wip
 
 ## first release (can release to store and use personally)
-- handle case where window ids and bm ids can collide (separate structures?)
-- divide windows and bookmarks into separate categories
 - cleanup folders, decide which tests to keep
 - BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
-- webext-bridge doesn't work from popups. remove
+- webext-bridge doesn't work from popups. remove dep
 
 ## possibly critical before release
 - better function names
@@ -48,5 +46,5 @@
 - persist: ok
 - archive: ok
 - restore: ok
-- delete: ok
+- delete: bounded window leaves open empty group
 - rename: ok

@@ -17,6 +17,11 @@ export interface Dictionary<T> {
   [Key: string]: T
 }
 
+export enum ListTypeEnum {
+  Open,
+  Archived,
+}
+
 export const groupBy = function<T> (arr: Array<T>, key: (x: T) => string): { [Key: string]: Array<T> } {
   return arr.reduce((rv, x) => {
     // @ts-expect-error: indexing into object by string

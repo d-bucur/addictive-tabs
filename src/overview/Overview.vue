@@ -2,28 +2,19 @@
 import { type Tabs, type Windows } from 'webextension-polyfill'
 import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupOperations'
 import type { Dictionary, Group } from '~/composables/utils'
-import { getViewType, groupBy } from '~/composables/utils'
+import { ListTypeEnum, getViewType, groupBy } from '~/composables/utils'
 
 let bookmarkRootId = '1'
-const tabsGroups: { value: Dictionary<Group> } = reactive({ value: {} })
+const groups: { open: Dictionary<Group>; archived: Dictionary<Group> } = reactive({ open: {}, archived: {} })
 // binding is duplicated inside groups. any way to refactor this?
 const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
 
 const viewType = computed(getViewType)
-const groupKeysIterator = computed(() => {
-  const windows: string[] = []
-  const bms: string[] = []
-  for (const k in tabsGroups.value) {
-    if (tabsGroups.value[k].windowId)
-      windows.push(k)
-    else bms.push(k)
-  }
-  return windows.concat(bms)
-})
 
 async function refreshGroups() {
   // console.log('Starting refreshGroups')
-  tabsGroups.value = {}
+  groups.open = {}
+  groups.archived = {}
   await refreshBookmarks()
   await refreshActiveWindows()
   refreshBindReferences()
@@ -32,15 +23,15 @@ async function refreshGroups() {
 
 function refreshBindReferences() {
   for (const winId in bindings.windowToBookmark) {
-    if (!(winId in tabsGroups.value)) {
+    if (!(winId in groups.open)) {
       // prune old window values
       // this will not be persisted until next save
       delete bindings.windowToBookmark[winId]
       continue
     }
     const bmId = bindings.windowToBookmark[winId]
-    tabsGroups.value[winId].bookmarkId = bmId
-    delete tabsGroups.value[bmId]
+    groups.open[winId].bookmarkId = bmId
+    delete groups.archived[bmId]
   }
 }
 
@@ -64,7 +55,7 @@ async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
   else
     group.title = makeGroupTitle(group)
   group.bookmarkId = boundBmId
-  tabsGroups.value[winId] = group
+  groups.open[winId] = group
   // console.log('refreshWindow group keys', Object.keys(tabsGroups.value))
   // console.log('Refreshed group', group)
 }
@@ -74,7 +65,7 @@ async function refreshBookmarks() {
   // console.log('API bms', bmTree)
   for (const bmFolder of bmTree[0].children ?? []) {
     if (!bmFolder.url)
-      tabsGroups.value[bmFolder.id] = makeGroupFromBm(bmFolder)
+      groups.archived[bmFolder.id] = makeGroupFromBm(bmFolder)
   }
 }
 
@@ -82,11 +73,11 @@ async function handleBind(winId: string) {
   // console.log(`Binding ${groupId}`)
   const bmFolder = await browser.bookmarks.create({
     parentId: bookmarkRootId,
-    title: tabsGroups.value[winId].title,
+    title: groups.open[winId].title,
   })
   bindings.windowToBookmark[winId] = bmFolder.id
   saveState()
-  tabsGroups.value[winId].bookmarkId = bmFolder.id
+  groups.open[winId].bookmarkId = bmFolder.id
 }
 
 async function handlePersist(groupId: string) {
@@ -96,7 +87,7 @@ async function handlePersist(groupId: string) {
   // console.log('Removing', currentBookmarks)
   currentBookmarks[0].children?.forEach(async bm => await browser.bookmarks.remove(bm.id))
 
-  for (const tab of tabsGroups.value[groupId].tabs) {
+  for (const tab of groups.open[groupId].tabs) {
     await browser.bookmarks.create({
       title: tab.title,
       url: tab.url,
@@ -105,24 +96,24 @@ async function handlePersist(groupId: string) {
   }
 }
 
-async function handleRestore(groupId: string) {
-  const bmGroup = tabsGroups.value[groupId]
+async function handleRestore(archivedId: string) {
+  const bmGroup = groups.archived[archivedId]
   const window = await browser.windows.create({
     url: bmGroup.tabs.map(t => t.url),
   })
   const winId = window.id!.toString()
   bindings.windowToBookmark[winId] = bmGroup.bookmarkId!
   saveState()
-  tabsGroups.value[winId].bookmarkId = groupId
+  groups.open[winId].bookmarkId = archivedId
   // console.log('handleRestore done', tabsGroups.value[winId])
-  delete tabsGroups.value[groupId]
+  delete groups.archived[archivedId]
 }
 
-async function handleUnbind(groupId: string) {
-  const bmId = bindings.windowToBookmark[groupId]
-  delete bindings.windowToBookmark[groupId]
+async function handleUnbind(winId: string) {
+  const bmId = bindings.windowToBookmark[winId]
+  delete bindings.windowToBookmark[winId]
   saveState()
-  delete tabsGroups.value[groupId].bookmarkId
+  delete groups.open[winId].bookmarkId
   createGroupFromBookmark(bmId)
   // await refreshGroups()
 }
@@ -139,7 +130,7 @@ async function cleanupOnWindowClose(winId: string) {
     delete bindings.windowToBookmark[winId]
     await createGroupFromBookmark(bmId)
   }
-  delete tabsGroups.value[winId]
+  delete groups.open[winId]
 }
 
 async function handleArchive(winId: string) {
@@ -155,21 +146,26 @@ async function createGroupFromBookmark(bmId: string) {
   const bm = (await browser.bookmarks.get(bmId))[0]
   bm.children = await browser.bookmarks.getChildren(bmId)
   // console.log('refreshing bookmark', bm)
-  tabsGroups.value[bmId] = makeGroupFromBm(bm)
+  groups.archived[bmId] = makeGroupFromBm(bm)
 }
 
-async function handleRemove(groupId: string) {
-  const group = tabsGroups.value[groupId]
+function selectGroup(type: ListTypeEnum) {
+  return type === ListTypeEnum.Open ? groups.open : groups.archived
+}
+
+async function handleRemove(groupId: string, type: ListTypeEnum) {
+  const selectedGroup = selectGroup(type)
+  const group = selectedGroup[groupId]
   if (group.windowId)
     await closeWindow(groupId)
   if (group.bookmarkId) {
     await browser.bookmarks.removeTree(group.bookmarkId)
-    delete tabsGroups.value[group.bookmarkId]
+    delete selectedGroup[group.bookmarkId]
   }
 }
 
-async function handleRename(id: string, value: string) {
-  const group = tabsGroups.value[id]
+async function handleRename(id: string, value: string, type: ListTypeEnum) {
+  const group = selectGroup(type)[id]
   group.title = value
   if (group.bookmarkId) {
     browser.bookmarks.update(group.bookmarkId, {
@@ -291,7 +287,7 @@ function removeStateChangeHandlers() {
 </script>
 
 <template>
-  <main class="px-4 py-5 text-center">
+  <main class="px-4 py-5 text-center" flex flex-col>
     <div>
       <button v-if="viewType !== 'tab'" class="btn mt-2" @click="openOverviewPage">
         Full
@@ -302,9 +298,10 @@ function removeStateChangeHandlers() {
     </div>
     <div flex gap-1em flex-wrap>
       <TabList
-        v-for="k in groupKeysIterator" :id="k"
+        v-for="k in Object.keys(groups.open)" :id="k"
         :key="k"
-        :group-data="tabsGroups.value[k]"
+        :group-data="groups.open[k]"
+        :type="ListTypeEnum.Open"
         @bind="handleBind"
         @persist="handlePersist"
         @restore="handleRestore"
@@ -313,7 +310,24 @@ function removeStateChangeHandlers() {
         @rename="handleRename"
         @remove="handleRemove"
       />
-      <div />
+    </div>
+    <div border-b>
+      Archived
+    </div>
+    <div flex gap-1em flex-wrap>
+      <TabList
+        v-for="k in Object.keys(groups.archived)" :id="k"
+        :key="k"
+        :group-data="groups.archived[k]"
+        :type="ListTypeEnum.Archived"
+        @bind="handleBind"
+        @persist="handlePersist"
+        @restore="handleRestore"
+        @unbind="handleUnbind"
+        @archive="handleArchive"
+        @rename="handleRename"
+        @remove="handleRemove"
+      />
     </div>
   </main>
 </template>

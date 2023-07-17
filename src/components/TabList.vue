@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import type { Group } from '~/composables/utils'
+import type { Group, ListTypeEnum } from '~/composables/utils'
+// @ts-expect-error: ts is
 import IcRoundInsertLink from '~icons/ic/round-insert-link'
+// @ts-expect-error: still missing
 import MaterialSymbolsDeleteOutlineRounded from '~icons/material-symbols/delete-outline-rounded'
+// @ts-expect-error: block ignore
 import IcBaselineSaveAlt from '~icons/ic/baseline-save-alt'
+// @ts-expect-error: after
 import IcBaselineSave from '~icons/ic/baseline-save'
+// @ts-expect-error: 6 years
 import MaterialSymbolsUpload from '~icons/material-symbols/upload'
+// @ts-expect-error: https://github.com/Microsoft/TypeScript/issues/19573
 import StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink from '~icons/streamline/interface-link-broken-break-broken-hyperlink-link-remove-unlink'
 
 const props = defineProps<{
   id: string
   groupData: Group
+  type: ListTypeEnum
 }>()
 
 // TODO typesafe emits
@@ -19,7 +26,7 @@ const isBounded = computed(() => props.groupData.windowId && props.groupData.boo
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
 
 // @ts-expect-error: value exists on event
-const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.value)
+const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.value, props.type)
 
 // onMounted(() => console.log('Updating list', props.groupData))
 </script>
@@ -58,7 +65,7 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
         <!-- Restore -->
         <MaterialSymbolsUpload />
       </button>
-      <button class="btn" title="Remove" @click="emit('remove', id)">
+      <button class="btn" title="Remove" @click="emit('remove', id, props.type)">
         <!-- <span i-material-symbols-delete-outline-rounded text-3rem>a</span> -->
         <MaterialSymbolsDeleteOutlineRounded />
         <!-- Remove -->
