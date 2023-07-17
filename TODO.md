@@ -3,7 +3,6 @@
 ## first release (can release to store and use personally)
 - BUG: opening full page when sidebar is also opened make it get the override css. maybe can replace with media queries
 - webext-bridge doesn't work from popups. remove dep
-- better function names
 - remove sidebar until more stable
 - remove unocss
 - refactor overview js and separate into modules

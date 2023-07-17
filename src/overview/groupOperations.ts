@@ -2,16 +2,16 @@ import type { Bookmarks, Tabs } from 'webextension-polyfill'
 import { extractDomainName, faviconURL, groupBy } from '~/composables/utils'
 import type { Group, TabItem } from '~/composables/utils'
 
-export function convertTab(tab: Tabs.Tab): TabItem {
+function convertTab(tab: Tabs.Tab): TabItem {
   return {
-    id: tab.id?.toString() ?? 'undefined', // might happen in some edge cases?
+    id: tab.id!.toString(),
     title: tab.title!,
     url: tab.url!,
     favIconUrl: faviconURL(tab.url),
   }
 }
 
-export function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
+function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
   return {
     id: bm.id,
     title: bm.title,

@@ -11,7 +11,21 @@ const bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBo
 
 const viewType = computed(getViewType)
 
-async function refreshGroups() {
+onMounted(async () => {
+  bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
+  await checkEntrypoint()
+  loadState()
+  await refreshView()
+  window.addEventListener('beforeunload', _event => cleanup())
+  addStateChangeHandlers()
+})
+
+onUnmounted(() => {
+  cleanup()
+  removeStateChangeHandlers()
+})
+
+async function refreshView() {
   // console.log('Starting refreshGroups')
   groups.open = {}
   groups.archived = {}
@@ -19,6 +33,50 @@ async function refreshGroups() {
   await refreshActiveWindows()
   refreshBindReferences()
   // console.log('Ended refreshGroups', tabsGroups.value)
+}
+
+async function refreshBookmarks() {
+  const bmTree = await browser.bookmarks.getSubTree(bookmarkRootId)
+  // console.log('API bms', bmTree)
+  for (const bmFolder of bmTree[0].children ?? []) {
+    if (!bmFolder.url)
+      groups.archived[bmFolder.id] = makeGroupFromBm(bmFolder)
+  }
+}
+
+async function refreshActiveWindows() {
+  const tabsRes = await browser.tabs.query({})
+  console.log('API tabs', tabsRes)
+
+  const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
+  // console.log('tabsGrouped', tabsGrouped)
+
+  for (const [winId, tabs] of Object.entries(tabsGrouped))
+    await refreshWindowFromTabs(winId, tabs)
+}
+
+async function refreshWindowFromTabs(winId: string, tabs: Tabs.Tab[]) {
+  // console.log('refreshing window', winId)
+  const group = makeGroupFromWindow(winId, tabs)
+  const boundBmId = bindings.windowToBookmark[winId]
+  if (boundBmId)
+    group.title = (await browser.bookmarks.get(boundBmId))[0].title
+  else
+    group.title = makeGroupTitle(group)
+  group.bookmarkId = boundBmId
+  groups.open[winId] = group
+  // console.log('refreshWindow group keys', Object.keys(tabsGroups.value))
+  // console.log('Refreshed group', group)
+}
+
+async function refreshWindowFromId(winId: number, canIdBeInvalid = false) {
+  browser.windows.get(winId, {
+    populate: true,
+  }).then(async win => await refreshWindowFromTabs(winId.toString(), win.tabs ?? []))
+    .catch((reason) => {
+      if (!canIdBeInvalid)
+        console.error(reason)
+    })
 }
 
 function refreshBindReferences() {
@@ -35,38 +93,27 @@ function refreshBindReferences() {
   }
 }
 
-async function refreshActiveWindows() {
-  const tabsRes = await browser.tabs.query({})
-  console.log('API tabs', tabsRes)
-
-  const tabsGrouped = groupBy(tabsRes, t => t.windowId!.toString()) // id might be undef in some cases?
-  // console.log('tabsGrouped', tabsGrouped)
-
-  for (const [winId, tabs] of Object.entries(tabsGrouped))
-    await refreshWindow(winId, tabs)
+async function closeWindow(winId: string) {
+  await browser.windows.remove(parseInt(winId))
+  // note: tabs will still be returned from API at this point
+  await cleanupOnWindowClose(winId)
 }
 
-async function refreshWindow(winId: string, tabs: Tabs.Tab[]) {
-  // console.log('refreshing window', winId)
-  const group = makeGroupFromWindow(winId, tabs)
-  const boundBmId = bindings.windowToBookmark[winId]
-  if (boundBmId)
-    group.title = (await browser.bookmarks.get(boundBmId))[0].title
-  else
-    group.title = makeGroupTitle(group)
-  group.bookmarkId = boundBmId
-  groups.open[winId] = group
-  // console.log('refreshWindow group keys', Object.keys(tabsGroups.value))
-  // console.log('Refreshed group', group)
-}
-
-async function refreshBookmarks() {
-  const bmTree = await browser.bookmarks.getSubTree(bookmarkRootId)
-  // console.log('API bms', bmTree)
-  for (const bmFolder of bmTree[0].children ?? []) {
-    if (!bmFolder.url)
-      groups.archived[bmFolder.id] = makeGroupFromBm(bmFolder)
+async function cleanupOnWindowClose(winId: string) {
+  const bmId = bindings.windowToBookmark[winId]
+  if (bmId) {
+    delete bindings.windowToBookmark[winId]
+    await createGroupFromBookmark(bmId)
   }
+  delete groups.open[winId]
+}
+
+async function createGroupFromBookmark(bmId: string) {
+  // using separate queries because API returns empty children if bm folder just created
+  const bm = (await browser.bookmarks.get(bmId))[0]
+  bm.children = await browser.bookmarks.getChildren(bmId)
+  // console.log('refreshing bookmark', bm)
+  groups.archived[bmId] = makeGroupFromBm(bm)
 }
 
 async function handleBind(winId: string) {
@@ -118,39 +165,12 @@ async function handleUnbind(winId: string) {
   // await refreshGroups()
 }
 
-async function closeWindow(winId: string) {
-  await browser.windows.remove(parseInt(winId))
-  // note: tabs will still be returned from API at this point
-  await cleanupOnWindowClose(winId)
-}
-
-async function cleanupOnWindowClose(winId: string) {
-  const bmId = bindings.windowToBookmark[winId]
-  if (bmId) {
-    delete bindings.windowToBookmark[winId]
-    await createGroupFromBookmark(bmId)
-  }
-  delete groups.open[winId]
-}
-
 async function handleArchive(winId: string) {
   // maybe not great idea to call handlers directly?
   if (!bindings.windowToBookmark[winId])
     await handleBind(winId)
   await handlePersist(winId)
   await closeWindow(winId)
-}
-
-async function createGroupFromBookmark(bmId: string) {
-  // using separate queries because API returns empty children if bm folder just created
-  const bm = (await browser.bookmarks.get(bmId))[0]
-  bm.children = await browser.bookmarks.getChildren(bmId)
-  // console.log('refreshing bookmark', bm)
-  groups.archived[bmId] = makeGroupFromBm(bm)
-}
-
-function selectGroup(type: ListTypeEnum) {
-  return type === ListTypeEnum.Open ? groups.open : groups.archived
 }
 
 async function handleRemove(groupId: string, type: ListTypeEnum) {
@@ -174,27 +194,17 @@ async function handleRename(id: string, value: string, type: ListTypeEnum) {
   }
 }
 
-onMounted(async () => {
-  bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
-  await checkEntrypoint()
-  loadState()
-  await refreshGroups()
-  window.addEventListener('beforeunload', _event => cleanup())
-  addStateChangeHandlers()
-})
-
-onUnmounted(() => {
-  cleanup()
-  removeStateChangeHandlers()
-})
-
-function cleanup() {
-  // console.log('Unmounting, saving state')
-  saveState()
+function selectGroup(type: ListTypeEnum) {
+  return type === ListTypeEnum.Open ? groups.open : groups.archived
 }
 
 function openOverviewPage() {
   browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
+}
+
+function cleanup() {
+  // console.log('Unmounting, saving state')
+  saveState()
 }
 
 function saveState() {
@@ -221,18 +231,8 @@ async function checkEntrypoint() {
   }
 }
 
-async function redrawWindow(winId: number, canIdBeInvalid = false) {
-  browser.windows.get(winId, {
-    populate: true,
-  }).then(async win => await refreshWindow(winId.toString(), win.tabs ?? []))
-    .catch((reason) => {
-      if (!canIdBeInvalid)
-        console.error(reason)
-    })
-}
-
 function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
-  redrawWindow(tab.windowId!)
+  refreshWindowFromId(tab.windowId!)
 }
 
 async function handleWinOnRemoved(windowId: number) {
@@ -240,27 +240,27 @@ async function handleWinOnRemoved(windowId: number) {
 }
 
 function handleWinOnCreated(win: Windows.Window): void {
-  refreshWindow(win.id!.toString(), win.tabs ?? [])
+  refreshWindowFromTabs(win.id!.toString(), win.tabs ?? [])
   // console.log('created window', win)
   // TODO hard: check if it is a bound window that was reopened
 }
 
 function handleTabOnRemoved(tabId: number, removeInfo: Tabs.OnRemovedRemoveInfoType) {
   // console.log('handleTabOnRemoved', removeInfo)
-  redrawWindow(removeInfo.windowId, true)
+  refreshWindowFromId(removeInfo.windowId, true)
 }
 
 function handleTabOnAttached(tabId: number, attachInfo: Tabs.OnAttachedAttachInfoType) {
   // console.log('handleTabOnAttached', attachInfo)
-  redrawWindow(attachInfo.newWindowId)
+  refreshWindowFromId(attachInfo.newWindowId)
 }
 
 function handleTabOnDetached(tabId: number, detachInfo: Tabs.OnDetachedDetachInfoType) {
-  redrawWindow(detachInfo.oldWindowId, true)
+  refreshWindowFromId(detachInfo.oldWindowId, true)
 }
 
 function handleTabOnMoved(tabId: number, moveInfo: Tabs.OnMovedMoveInfoType) {
-  redrawWindow(moveInfo.windowId)
+  refreshWindowFromId(moveInfo.windowId)
 }
 
 function addStateChangeHandlers() {
