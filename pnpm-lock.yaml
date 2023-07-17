@@ -14,9 +14,6 @@ devDependencies:
   '@iconify/json':
     specifier: ^2.2.61
     version: 2.2.61
-  '@playwright/test':
-    specifier: ^1.33.0
-    version: 1.33.0
   '@types/fs-extra':
     specifier: ^11.0.1
     version: 11.0.1
@@ -44,9 +41,6 @@ devDependencies:
   '@vue/test-utils':
     specifier: ^2.3.2
     version: 2.3.2(vue@3.2.47)
-  '@vueuse/core':
-    specifier: ^10.1.2
-    version: 10.1.2(vue@3.2.47)
   chokidar:
     specifier: ^3.5.3
     version: 3.5.3
@@ -68,9 +62,6 @@ devDependencies:
   jsdom:
     specifier: ^21.1.2
     version: 21.1.2
-  kolorist:
-    specifier: ^1.8.0
-    version: 1.8.0
   lint-staged:
     specifier: ^13.2.2
     version: 13.2.2
@@ -91,7 +82,7 @@ devDependencies:
     version: 0.53.5(postcss@8.4.25)(vite@4.3.5)
   unplugin-auto-import:
     specifier: ^0.15.3
-    version: 0.15.3(@vueuse/core@10.1.2)
+    version: 0.15.3
   unplugin-icons:
     specifier: ^0.16.1
     version: 0.16.1(@vue/compiler-sfc@3.2.47)
@@ -107,15 +98,9 @@ devDependencies:
   vue:
     specifier: ^3.2.47
     version: 3.2.47
-  vue-demi:
-    specifier: ^0.14.0
-    version: 0.14.0(vue@3.2.47)
   web-ext:
     specifier: ^7.6.2
     version: 7.6.2
-  webext-bridge:
-    specifier: ^6.0.1
-    version: 6.0.1
   webextension-polyfill:
     specifier: ^0.10.0
     version: 0.10.0
@@ -773,17 +758,6 @@ packages:
     dev: true
     optional: true
 
-  /@playwright/test@1.33.0:
-    resolution: {integrity: sha512-YunBa2mE7Hq4CfPkGzQRK916a4tuZoVx/EpLjeWlTVOnD4S2+fdaQZE0LJkbfhN5FTSKNLdcl7MoT5XB37bTkg==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dependencies:
-      '@types/node': 18.16.5
-      playwright-core: 1.33.0
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /@pnpm/config.env-replace@1.1.0:
     resolution: {integrity: sha512-htyl8TWnKL7K/ESFa1oW2UB5lVDxuF5DpM7tBi6Hu2LNL3mWkIzNLG6N4zoCUP1lCKNxWy/3iu8mS8MvToGd6w==}
     engines: {node: '>=12.22.0'}
@@ -905,16 +879,8 @@ packages:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
     dev: true
 
-  /@types/web-bluetooth@0.0.17:
-    resolution: {integrity: sha512-4p9vcSmxAayx72yn70joFoL44c9MO/0+iVEBIQXe3v2h2SiAsEIo/G5v6ObFWvNKRFjbrVadNf9LqEEZeQPzdA==}
-    dev: true
-
   /@types/webextension-polyfill@0.10.0:
     resolution: {integrity: sha512-If4EcaHzYTqcbNMp/FdReVdRmLL/Te42ivnJII551bYjhX19bWem5m14FERCqdJA732OloGuxCRvLBvcMGsn4A==}
-    dev: true
-
-  /@types/webextension-polyfill@0.8.3:
-    resolution: {integrity: sha512-GN+Hjzy9mXjWoXKmaicTegv3FJ0WFZ3aYz77Wk8TMp1IY3vEzvzj1vnsa0ggV7vMI1i+PUxe4qqnIJKCzf9aTg==}
     dev: true
 
   /@types/yauzl@2.10.0:
@@ -1523,31 +1489,6 @@ packages:
     optionalDependencies:
       '@vue/compiler-dom': 3.3.4
       '@vue/server-renderer': 3.3.4(vue@3.2.47)
-    dev: true
-
-  /@vueuse/core@10.1.2(vue@3.2.47):
-    resolution: {integrity: sha512-roNn8WuerI56A5uiTyF/TEYX0Y+VKlhZAF94unUfdhbDUI+NfwQMn4FUnUscIRUhv3344qvAghopU4bzLPNFlA==}
-    dependencies:
-      '@types/web-bluetooth': 0.0.17
-      '@vueuse/metadata': 10.1.2
-      '@vueuse/shared': 10.1.2(vue@3.2.47)
-      vue-demi: 0.14.0(vue@3.2.47)
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
-    dev: true
-
-  /@vueuse/metadata@10.1.2:
-    resolution: {integrity: sha512-3mc5BqN9aU2SqBeBuWE7ne4OtXHoHKggNgxZR2K+zIW4YLsy6xoZ4/9vErQs6tvoKDX6QAqm3lvsrv0mczAwIQ==}
-    dev: true
-
-  /@vueuse/shared@10.1.2(vue@3.2.47):
-    resolution: {integrity: sha512-1uoUTPBlgyscK9v6ScGeVYDDzlPSFXBlxuK7SfrDGyUTBiznb3mNceqhwvZHjtDRELZEN79V5uWPTF1VDV8svA==}
-    dependencies:
-      vue-demi: 0.14.0(vue@3.2.47)
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
     dev: true
 
   /abab@2.0.6:
@@ -5106,11 +5047,6 @@ packages:
     dev: true
     optional: true
 
-  /nanoevents@6.0.2:
-    resolution: {integrity: sha512-FRS2otuFcPPYDPYViNWQ42+1iZqbXydinkRHTHFxrF4a1CpBfmydR9zkI44WSXAXCyPrkcGtPk5CnpW6Y3lFKQ==}
-    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
-    dev: true
-
   /nanoid@3.3.6:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -5636,12 +5572,6 @@ packages:
       pathe: 1.1.0
     dev: true
 
-  /playwright-core@1.33.0:
-    resolution: {integrity: sha512-aizyPE1Cj62vAECdph1iaMILpT0WUDCq3E6rW6I+dleSbBoGbktvJtzS6VHkZ4DKNEOG9qJpiom/ZxO+S15LAw==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dev: true
-
   /pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
@@ -6156,13 +6086,6 @@ packages:
       lru-cache: 6.0.0
     dev: true
 
-  /serialize-error@9.1.1:
-    resolution: {integrity: sha512-6uZQLGyUkNA4N+Zii9fYukmNu9PEA1F5rqcwXzN/3LtBjwl2dFBbVZ1Zyn08/CGkB4H440PIemdOQBt1Wvjbrg==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    dependencies:
-      type-fest: 2.19.0
-    dev: true
-
   /setimmediate@1.0.5:
     resolution: {integrity: sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==}
     dev: true
@@ -6617,10 +6540,6 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /tiny-uid@1.1.2:
-    resolution: {integrity: sha512-0beRFXR+fv4C40ND2PqgNjq6iyB1dKXciKJjslLw0kPYCcR82aNd2b+Tt2yy06LimIlvtoehgvrm/fUZCutSfg==}
-    dev: true
-
   /tinybench@2.5.0:
     resolution: {integrity: sha512-kRwSG8Zx4tjF9ZiyH4bhaebu+EDz1BOx9hOigYHlUW4xxI/wKIUQUqo018UlU4ar6ATPBsaMrdbKZ+tmPdohFA==}
     dev: true
@@ -6913,7 +6832,7 @@ packages:
       - vite
     dev: true
 
-  /unplugin-auto-import@0.15.3(@vueuse/core@10.1.2):
+  /unplugin-auto-import@0.15.3:
     resolution: {integrity: sha512-RLT8SqbPn4bT7yBshZId0uPSofKWnwr66RyDaxWaFb/+f7OTDOWAsVNz+hOQLBWSjvbekr2xZY9ccS8TDHJbCQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -6927,7 +6846,6 @@ packages:
     dependencies:
       '@antfu/utils': 0.7.2
       '@rollup/pluginutils': 5.0.2
-      '@vueuse/core': 10.1.2(vue@3.2.47)
       local-pkg: 0.4.3
       magic-string: 0.30.0
       minimatch: 9.0.0
@@ -7193,21 +7111,6 @@ packages:
       - terser
     dev: true
 
-  /vue-demi@0.14.0(vue@3.2.47):
-    resolution: {integrity: sha512-gt58r2ogsNQeVoQ3EhoUAvUsH9xviydl0dWJj7dabBC/2L4uBId7ujtCwDRD0JhkGsV1i0CtfLAeyYKBht9oWg==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      vue: 3.2.47
-    dev: true
-
   /vue-eslint-parser@9.2.1(eslint@8.40.0):
     resolution: {integrity: sha512-tPOex4n6jit4E7h68auOEbDMwE58XiP4dylfaVTCOVCouR45g+QFDBjgIdEU52EXJxKyjgh91dLfN2rxUcV0bQ==}
     engines: {node: ^14.17.0 || >=16.0.0}
@@ -7308,22 +7211,8 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /webext-bridge@6.0.1:
-    resolution: {integrity: sha512-GruIrN+vNwbxVCi8UW4Dqk5YkcGA9V0ZfJ57jXP9JXHbrsDs5k2N6NNYQR5e+wSCnQpGYOGAGihwUpKlhg8QIw==}
-    dependencies:
-      '@types/webextension-polyfill': 0.8.3
-      nanoevents: 6.0.2
-      serialize-error: 9.1.1
-      tiny-uid: 1.1.2
-      webextension-polyfill: 0.9.0
-    dev: true
-
   /webextension-polyfill@0.10.0:
     resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
-    dev: true
-
-  /webextension-polyfill@0.9.0:
-    resolution: {integrity: sha512-LTtHb0yR49xa9irkstDxba4GATDAcDw3ncnFH9RImoFwDlW47U95ME5sn5IiQX2ghfaECaf6xyXM8yvClIBkkw==}
     dev: true
 
   /webidl-conversions@7.0.0:

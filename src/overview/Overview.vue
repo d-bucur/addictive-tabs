@@ -176,7 +176,7 @@ async function handleRename(id: string, value: string, type: ListTypeEnum) {
 
 onMounted(async () => {
   bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
-  await handleEntrypoint()
+  await checkEntrypoint()
   loadState()
   await refreshGroups()
   window.addEventListener('beforeunload', _event => cleanup())
@@ -211,7 +211,7 @@ function loadState() {
   }
 }
 
-async function handleEntrypoint() {
+async function checkEntrypoint() {
   // sidebar entry, query params would be nicer but not possible in manifest
   if (viewType.value === 'sidebar') {
     // console.log('loading other style')
@@ -219,14 +219,6 @@ async function handleEntrypoint() {
       'beforeend',
       '<link rel="stylesheet" href="../background/override.css" />')
   }
-}
-
-function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
-  redrawWindow(tab.windowId!)
-}
-
-async function handleWinOnRemoved(windowId: number) {
-  await cleanupOnWindowClose(windowId.toString())
 }
 
 async function redrawWindow(winId: number, canIdBeInvalid = false) {
@@ -237,6 +229,14 @@ async function redrawWindow(winId: number, canIdBeInvalid = false) {
       if (!canIdBeInvalid)
         console.error(reason)
     })
+}
+
+function handleTabOnUpdate(tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): void {
+  redrawWindow(tab.windowId!)
+}
+
+async function handleWinOnRemoved(windowId: number) {
+  await cleanupOnWindowClose(windowId.toString())
 }
 
 function handleWinOnCreated(win: Windows.Window): void {

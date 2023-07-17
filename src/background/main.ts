@@ -1,6 +1,3 @@
-import { onMessage, sendMessage } from 'webext-bridge/background'
-import type { Tabs } from 'webextension-polyfill'
-
 // only on dev mode
 if (import.meta.hot) {
   // @ts-expect-error for background HMR
@@ -33,43 +30,6 @@ browser.runtime.onInstalled.addListener(async () => {
   await createRootBmFolder()
 })
 
-let previousTabId = 0
-
-// communication example: send previous tab title from background page
-// see shim.d.ts for type declaration
-browser.tabs.onActivated.addListener(async ({ tabId }) => {
-  if (!previousTabId) {
-    previousTabId = tabId
-    return
-  }
-
-  let tab: Tabs.Tab
-
-  try {
-    tab = await browser.tabs.get(previousTabId)
-    previousTabId = tabId
-  }
-  catch {
-    return
-  }
-
-  console.log('previous tab', tab)
-  sendMessage('tab-prev', { title: tab.title }, { context: 'content-script', tabId })
-})
-
 // TODO better message handling when needed
+// @ts-expect-error: sendResponse accepts params
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => sendResponse({ actualBookmarkRootId }))
-
-onMessage('get-current-tab', async () => {
-  try {
-    const tab = await browser.tabs.get(previousTabId)
-    return {
-      title: tab?.title,
-    }
-  }
-  catch {
-    return {
-      title: undefined,
-    }
-  }
-})
