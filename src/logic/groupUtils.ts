@@ -1,6 +1,24 @@
 import type { Bookmarks, Tabs } from 'webextension-polyfill'
-import { extractDomainName, faviconURL, groupBy } from '~/composables/utils'
-import type { IGroup, ITabItem } from '~/composables/utils'
+import { extractDomainName, faviconURL, groupBy } from './utils'
+
+export interface ITabItem {
+  id: string
+  title: string
+  url: string
+  favIconUrl?: string
+}
+
+export interface IGroup {
+  title: string
+  windowId?: string
+  bookmarkId?: string
+  tabs: Array<ITabItem>
+}
+
+export enum ListTypeEnum {
+  Open,
+  Archived,
+}
 
 function convertTab(tab: Tabs.Tab): ITabItem {
   return {

@@ -1,6 +1,6 @@
 import type { Tabs, Windows } from 'webextension-polyfill'
 import type { Groups } from './groups'
-import { isIgnoredTab } from '~/overview/groupOperations'
+import { isIgnoredTab } from './groupUtils'
 
 export class StateChangeHandler {
   groups: Groups

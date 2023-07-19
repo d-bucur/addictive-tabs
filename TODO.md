@@ -1,8 +1,8 @@
 ## wip
+- refactor overview js and separate into modules. maybe extract groups to class
+- remove unocss and redo visuals
 
 ## first release (can release to store and use personally)
-- refactor overview js and separate into modules. maybe extract groups to class
-- remove unocss
 
 ## post release
 - bindings do not persist between browser reloads as windows change ids
@@ -28,8 +28,13 @@
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
   
-- consider https://headlessui.com/ for components
-- see https://tailwindui.com/ or bootstrap for example styling
+## component libraries/ui helpers
+- https://hihayk.github.io/shaper
+- https://shoelace.style/
+- https://headlessui.com/
+- https://tailwindui.com/
+- [bootstrap](https://getbootstrap.com/docs/5.3/examples/)
+- [daisyui](https://daisyui.com/theme-generator/) https://daisyui.com/docs/colors/
 
 
 ## operations status

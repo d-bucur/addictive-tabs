@@ -1,24 +1,5 @@
-export interface ITabItem {
-  id: string
-  title: string
-  url: string
-  favIconUrl?: string
-}
-
-export interface IGroup {
-  title: string
-  windowId?: string
-  bookmarkId?: string
-  tabs: Array<ITabItem>
-}
-
 export interface Dictionary<T> {
   [Key: string]: T
-}
-
-export enum ListTypeEnum {
-  Open,
-  Archived,
 }
 
 export const groupBy = function<T> (arr: Array<T>, key: (x: T) => string): { [Key: string]: Array<T> } {

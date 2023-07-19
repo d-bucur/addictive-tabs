@@ -1,6 +1,8 @@
 import type { Tabs } from 'webextension-polyfill'
-import { type Dictionary, type IGroup, ListTypeEnum, groupBy } from './utils'
-import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from '~/overview/groupOperations'
+import type { IGroup } from './groupUtils'
+import { ListTypeEnum, makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupUtils'
+import type { Dictionary } from './utils'
+import { groupBy } from './utils'
 
 export class Groups {
   groups: { open: Dictionary<IGroup>; archived: Dictionary<IGroup> } = reactive({ open: {}, archived: {} })
@@ -159,7 +161,7 @@ export class Groups {
     // TODO this depends on window handler to create it before this executes
     // can possibly fail
     this.groups.open[winId].bookmarkId = archivedId
-    console.log('handleRestore done', this.groups.archived[winId])
+    // console.log('handleRestore done', this.groups.archived[winId])
     delete this.groups.archived[archivedId]
   }
 

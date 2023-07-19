@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ListTypeEnum } from '~/composables/utils'
-import { Groups } from '~/composables/groups'
-import { StateChangeHandler } from '~/composables/changeHandlers'
+import { StateChangeHandler } from '~/logic/changeHandlers'
+import { Groups } from '~/logic/groups'
+import { ListTypeEnum } from '~/logic/groupUtils'
 
 let bookmarkRootId = '2000'
 let groupData: Groups // TODO refactor naming

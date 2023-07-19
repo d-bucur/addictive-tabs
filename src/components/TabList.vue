@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Group, ListTypeEnum } from '~/composables/utils'
+import type { IGroup, ListTypeEnum } from '~/logic/groupUtils'
 // @ts-expect-error: ts is
 import IcRoundInsertLink from '~icons/ic/round-insert-link'
 // @ts-expect-error: still missing
@@ -15,7 +15,7 @@ import StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink from '~
 
 const props = defineProps<{
   id: string
-  groupData: Group
+  groupData: IGroup
   type: ListTypeEnum
 }>()
 
