@@ -1,9 +1,9 @@
 import type { Tabs } from 'webextension-polyfill'
-import { type Dictionary, type Group, ListTypeEnum, groupBy } from './utils'
+import { type Dictionary, type IGroup, ListTypeEnum, groupBy } from './utils'
 import { makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from '~/overview/groupOperations'
 
 export class Groups {
-  groups: { open: Dictionary<Group>; archived: Dictionary<Group> } = reactive({ open: {}, archived: {} })
+  groups: { open: Dictionary<IGroup>; archived: Dictionary<IGroup> } = reactive({ open: {}, archived: {} })
   // binding is duplicated inside groups. any way to refactor this?
   bindings: { windowToBookmark: Dictionary<string> } = reactive({ windowToBookmark: {} })
   bookmarkRootId: string

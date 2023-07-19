@@ -1,8 +1,8 @@
 import type { Bookmarks, Tabs } from 'webextension-polyfill'
 import { extractDomainName, faviconURL, groupBy } from '~/composables/utils'
-import type { Group, TabItem } from '~/composables/utils'
+import type { IGroup, ITabItem } from '~/composables/utils'
 
-function convertTab(tab: Tabs.Tab): TabItem {
+function convertTab(tab: Tabs.Tab): ITabItem {
   return {
     id: tab.id!.toString(),
     title: tab.title!,
@@ -11,7 +11,7 @@ function convertTab(tab: Tabs.Tab): TabItem {
   }
 }
 
-function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
+function convertBookmark(bm: Bookmarks.BookmarkTreeNode): ITabItem {
   return {
     id: bm.id,
     title: bm.title,
@@ -20,11 +20,11 @@ function convertBookmark(bm: Bookmarks.BookmarkTreeNode): TabItem {
   }
 }
 
-export function makeGroupFromWindow(winId: string, tabs: Tabs.Tab[]): Group {
+export function makeGroupFromWindow(winId: string, tabs: Tabs.Tab[]): IGroup {
   return {
     title: winId,
     windowId: winId,
-    tabs: tabs.reduce((a: TabItem[], tab) => {
+    tabs: tabs.reduce((a: ITabItem[], tab) => {
       if (!isIgnoredTab(tab))
         a.push(convertTab(tab))
       return a
@@ -32,7 +32,7 @@ export function makeGroupFromWindow(winId: string, tabs: Tabs.Tab[]): Group {
   }
 }
 
-export function makeGroupFromBm(bmFolder: Bookmarks.BookmarkTreeNode): Group {
+export function makeGroupFromBm(bmFolder: Bookmarks.BookmarkTreeNode): IGroup {
   return {
     title: bmFolder.title,
     bookmarkId: bmFolder.id,
@@ -44,7 +44,7 @@ export function isIgnoredTab(tab: Tabs.Tab) {
   return tab.url?.startsWith('chrome-extension://') || tab.url?.startsWith('chrome://')
 }
 
-export function makeGroupTitle(group: Group) {
+export function makeGroupTitle(group: IGroup) {
   // otherwise compute from existing tabs
   const domains = groupBy(group.tabs, t => t.url ? extractDomainName(t.url) : 'others')
   // sort by number of entries

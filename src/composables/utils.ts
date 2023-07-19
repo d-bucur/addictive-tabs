@@ -1,16 +1,15 @@
-// TODO rename to IName
-export interface TabItem {
+export interface ITabItem {
   id: string
   title: string
   url: string
   favIconUrl?: string
 }
 
-export interface Group {
+export interface IGroup {
   title: string
   windowId?: string
   bookmarkId?: string
-  tabs: Array<TabItem>
+  tabs: Array<ITabItem>
 }
 
 export interface Dictionary<T> {

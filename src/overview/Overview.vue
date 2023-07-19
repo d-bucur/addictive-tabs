@@ -12,7 +12,6 @@ onBeforeMount(async () => {
   bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
   groupData = new Groups(bookmarkRootId)
   await groupData.refreshView()
-  // TODO try to move into beforeUpdate hook and remove this loadingReady
   loadingReady.value = true
   window.addEventListener('beforeunload', _event => cleanup())
   changeHandlers = new StateChangeHandler(groupData)
@@ -21,7 +20,7 @@ onBeforeMount(async () => {
 
 onUnmounted(() => {
   cleanup()
-  // changeHandlers.removeStateChangeHandlers()
+  changeHandlers.removeStateChangeHandlers()
 })
 
 function openOverviewPage() {
