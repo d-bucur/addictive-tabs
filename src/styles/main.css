@@ -1,5 +1,5 @@
 :root {
-  --app-min-width: 700px; /* not really used any more */
+  --app-min-width: 700px; /*  TODO not really used any more */
 }
 
 html,
@@ -7,12 +7,13 @@ body,
 #app {
   margin: 0;
   padding: 0;
-  @apply bg-coolgray-100 dark:bg-coolgray-700 dark:text-white;
+  /* @apply bg-coolgray-100 dark:bg-coolgray-700 dark:text-white; */
   min-width: var(--app-min-width);
   min-height: 600px;
 }
 
 .btn {
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   @apply px-2 py-1 rounded inline-block
     bg-coolgray-400 text-white dark:text-black  cursor-pointer
     hover:bg-teal-700
@@ -30,9 +31,5 @@ body,
 @media (max-width: 500px) {
   :root {
     --app-min-width: 1px !important;
-  }
-  
-  .tab-group-card {
-    width: 100% !important;
   }
 }

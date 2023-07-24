@@ -34,16 +34,13 @@ function cleanup() {
 </script>
 
 <template>
-  <main v-if="loadingReady" class="px-4 py-5 text-center" flex flex-col>
+  <main v-if="loadingReady" class="wrapper">
     <div>
-      <button class="btn mt-2" @click="openOverviewPage">
+      <button class="btn" @click="openOverviewPage">
         Full
       </button>
-      <!-- <button class="btn mt-2" @click="openSidePanel">
-        Side
-      </button> -->
     </div>
-    <div flex gap-1em flex-wrap>
+    <div class="tab-list">
       <TabList
         v-for="k in Object.keys(groupData.groups.open)" :id="k"
         :key="k"
@@ -58,10 +55,10 @@ function cleanup() {
         @remove="groupData.handleRemove"
       />
     </div>
-    <div border-b>
+    <div class="separator">
       Archived
     </div>
-    <div flex gap-1em flex-wrap>
+    <div class="tab-list">
       <TabList
         v-for="k in Object.keys(groupData.groups.archived)" :id="k"
         :key="k"
@@ -78,3 +75,22 @@ function cleanup() {
     </div>
   </main>
 </template>
+
+<style scoped>
+.wrapper {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  /* text-align: center; */
+}
+
+.tab-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.separator {
+  border-top: 1px solid;
+}
+</style>
