@@ -37,14 +37,10 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
     flex flex-col self-start border-rounded w-xs max-h-100
     bg-coolgray-50 dark:bg-coolgray-800 shadow-md
   >
-    <div
-      text-lg bg-coolgray-200 dark:bg-gray-900
-      :class="{ 'win-titlebar': isWindow, 'bound-titlebar': isBounded }"
-    >
-      <!-- <span>{{ groupData.title }}</span> -->
-      <input bg-transparent :value="groupData.title" @change="titleUpdateHandler">
+    <div class="title" :class="{ 'title-win': isWindow, 'title-bound': isBounded }">
+      <input :value="groupData.title" @change="titleUpdateHandler">
     </div>
-    <div flex flex-row gap-1em mla p-1>
+    <div class="buttons">
       <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
         <IcRoundInsertLink />
         <!-- Bind -->
@@ -66,15 +62,14 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
         <MaterialSymbolsUpload />
       </button>
       <button class="btn" title="Remove" @click="emit('remove', id, props.type)">
-        <!-- <span i-material-symbols-delete-outline-rounded text-3rem>a</span> -->
-        <MaterialSymbolsDeleteOutlineRounded />
         <!-- Remove -->
+        <MaterialSymbolsDeleteOutlineRounded />
       </button> <!-- TODO add confirmation -->
     </div>
-    <ul p-2 overflow-auto>
-      <li v-for="item in groupData.tabs" :key="item.id" flex flex-content-start p-1>
-        <img :src="item.favIconUrl" w-5 h-5 m-r2 border-rounded border-coolGray-2>
-        <div :title="item.url" text-nowrap text-left overflow-hidden>
+    <ul class="tab-list">
+      <li v-for="item in groupData.tabs" :key="item.id" class="tab-item">
+        <img :src="item.favIconUrl" class="favicon">
+        <div :title="item.url" class="tab-text">
           {{ item.title }}
         </div>
       </li>
@@ -83,10 +78,70 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
 </template>
 
 <style scoped>
-.win-titlebar {
-  @apply bg-warmgray-200 dark:bg-warmgray-900
+.tab-group-card {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  /* border: 1px solid; */
+  border-radius: 0.5rem;
+  max-height: 25rem;
+  width: 20rem;
+  background-color: rgba(249, 250, 251);
+  overflow: hidden;
+  /* box-shadow: 2px 2px 5px 3px rgba(0, 0, 0, 0.2); */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-.bound-titlebar {
-  @apply bg-bluegray-200 dark:bg-truegray-800
+
+.title {
+  font-size: 1.125rem;
+  background-color: rgba(229, 231, 235)
+}
+
+.title > input {
+  background-color: transparent;
+  /* border: none; */
+}
+
+.title-win {
+  background-color: rgba(231, 229, 228);
+  /* @apply bg-warmgray-200 dark:bg-warmgray-900 */
+}
+.title-bound {
+  background-color: rgba(226, 232, 240);
+  /* @apply bg-bluegray-200 dark:bg-truegray-800 */
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.tab-list {
+  padding: 0.5rem;
+  overflow: auto;
+}
+
+.tab-item {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab-text {
+  text-wrap: nowrap;
+  overflow: hidden;
+  /* text-align: left; */
+}
+
+.favicon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* for sidebar */
+@media (max-width: 500px) {
+  .tab-group-card {
+    width: 100% !important;
+  }
 }
 </style>
