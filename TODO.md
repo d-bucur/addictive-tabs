@@ -1,25 +1,28 @@
 ## wip
-- refactor overview js and separate into modules. maybe extract groups to class
 - remove unocss and redo visuals
 
 ## first release (can release to store and use personally)
+- hide actions bind and persist
 
 ## post release
 - bindings do not persist between browser reloads as windows change ids
 - possibility to change root bm folder
+- ask first time configuration: root bm and later persist method (bm vs localstorage)
+- close action: close active windows
+- discard action: [discard](https://developer.chrome.com/docs/extensions/reference/tabs/#method-discard) all tabs
 - move ownership of groups to background script so updated can happen in the bg
 - auto sync (needs details)
 - abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
 - chrome groups support: one level of bm folder nesting maps to group
 - icon for which tabs have changed compared to bookmark
-- save tab history to localstorage
 - firefox port when manifest 3 is ready https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
 - masonry grid for groups. or wait for grid implementation
 
 ## nice to have
-- order windows by last used
-- click individual tabs
+- click individual tabs to go to them
 - drag & drop functionality
+- order windows by last used
+- save tab history to localstorage
 - hover over item to see address
 - toggle mode that shows address under tab titles
 - search bar
@@ -29,12 +32,16 @@
 - button for group emoticon?
   
 ## component libraries/ui helpers
+- https://every-layout.dev/rudiments/modular-scale/
 - https://hihayk.github.io/shaper
 - https://shoelace.style/
 - https://headlessui.com/
 - https://tailwindui.com/
 - [bootstrap](https://getbootstrap.com/docs/5.3/examples/)
 - [daisyui](https://daisyui.com/theme-generator/) https://daisyui.com/docs/colors/
+- https://www.fluid-type-scale.com/calculate
+- https://contrast-grid.eightshapes.com/
+- https://www.radix-ui.com/
 
 
 ## operations status
