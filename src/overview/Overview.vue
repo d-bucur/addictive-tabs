@@ -35,8 +35,8 @@ function cleanup() {
 
 <template>
   <main v-if="loadingReady" class="wrapper">
-    <div>
-      <button class="btn" @click="openOverviewPage">
+    <div class="menu-bar">
+      <button id="full-btn" class="btn" @click="openOverviewPage">
         Full
       </button>
     </div>
@@ -93,16 +93,37 @@ function cleanup() {
 }
 
 .separator {
-  border-top: var(--fieldBorderWidth) dashed var(--c-fieldBorder);
-  font-size: var(--text-xs);
-  text-align: center;
-  margin-top: var(--text-s);
   display: flex;
   justify-content: center;
+  color: var(--c-bodyDimmed);
+  padding-top: var(--space-m);
+  padding-bottom: var(--space-m);
 }
 
 .separator-text {
-  transform: translateY(calc(var(--text-xs) * -1));
-  width: fit-content;
+  font-size: var(--text-xs);
+  width: 100%;
+  display: flex;
+  gap: var(--space-xl);
+}
+
+.separator-text::before, .separator-text::after {
+  border-top: var(--fieldBorderWidth) dashed var(--c-fieldBorder);
+  flex-grow: 1;
+  transform: translateY(50%);
+  content: '';
+}
+
+.menu-bar {
+  display: flex;
+  justify-content: end;
+}
+
+@media (min-width: 800px) {
+  /* only display in popup or sidebar. wonky detection this way */
+  #full-btn {
+    display: none;
+  }
+
 }
 </style>
