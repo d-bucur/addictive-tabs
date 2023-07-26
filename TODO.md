@@ -1,8 +1,9 @@
 ## wip
-- close action: close active windows
-- hide actions bind and persist
 
 ## first release (can release to store and use personally)
+- hotreload bugged: check main branch. or maybe due to separating ts code browser polyfill does not work
+- favicons don't work after first load
+- check all operations
 
 ## post release
 - bindings do not persist between browser reloads as windows change ids
