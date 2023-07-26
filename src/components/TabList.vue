@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { IGroup, ListTypeEnum } from '~/logic/groupUtils'
-// @ts-expect-error: ts is
+// @ts-expect-error: ts
 import IcRoundInsertLink from '~icons/ic/round-insert-link'
+// @ts-expect-error: is
+import AkarIconsLinkChain from '~icons/akar-icons/link-chain'
 // @ts-expect-error: still missing
 import MaterialSymbolsDeleteOutlineRounded from '~icons/material-symbols/delete-outline-rounded'
 // @ts-expect-error: block ignore
@@ -12,7 +14,6 @@ import IcBaselineSave from '~icons/ic/baseline-save'
 import MaterialSymbolsUpload from '~icons/material-symbols/upload'
 // @ts-expect-error: https://github.com/Microsoft/TypeScript/issues/19573
 import StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink from '~icons/streamline/interface-link-broken-break-broken-hyperlink-link-remove-unlink'
-import AkarIconsLinkChain from '~icons/akar-icons/link-chain'
 
 const props = defineProps<{
   id: string
@@ -99,7 +100,7 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  font-size: var(--text-m);
+  font-size: var(--text-s);
   background-color: var(--c-grey1);
   padding: var(--textFrameY) var(--textFrameX) var(--textFrameY) var(--textFrameX);
 }
