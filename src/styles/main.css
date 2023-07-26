@@ -97,7 +97,7 @@ html {
 .btn {
   /* padding: 0.25rem 0.5rem 0.25rem 0.5rem; */
   padding: var(--textFrameY) var(--textFrameX) var(--textFrameY) var(--textFrameX);
-  background-color: var(--c-buttonBg);
+  background-color: var(--c-grey1);
   border-radius: var(--radius);
   font-size: var(--text-xs);
   /* TODO remove apply */

@@ -12,6 +12,7 @@ import IcBaselineSave from '~icons/ic/baseline-save'
 import MaterialSymbolsUpload from '~icons/material-symbols/upload'
 // @ts-expect-error: https://github.com/Microsoft/TypeScript/issues/19573
 import StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink from '~icons/streamline/interface-link-broken-break-broken-hyperlink-link-remove-unlink'
+import AkarIconsLinkChain from '~icons/akar-icons/link-chain'
 
 const props = defineProps<{
   id: string
@@ -39,32 +40,35 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
   >
     <div class="title" :class="{ 'title-win': isWindow, 'title-bound': isBounded }">
       <input :value="groupData.title" @change="titleUpdateHandler">
+      <IcRoundInsertLink v-if="isBounded" title="Linked to bookmark" />
     </div>
-    <div class="buttons">
-      <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
-        <IcRoundInsertLink />
-        <!-- Bind -->
-      </button>
-      <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" title="Persist" @click="emit('persist', id)">
-        <!-- Persist -->
-        <IcBaselineSave />
-      </button>
-      <button v-if="groupData.windowId" class="btn" title="Archive" @click="emit('archive', id)">
-        <!-- Archive -->
-        <IcBaselineSaveAlt />
-      </button>
-      <button v-if="groupData.windowId && groupData.bookmarkId" title="Unbind" class="btn" @click="emit('unbind', id)">
-        <!-- Unbind -->
-        <StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink />
-      </button>
-      <button v-if="groupData.bookmarkId && !groupData.windowId" class="btn" title="Restore" @click="emit('restore', id)">
-        <!-- Restore -->
-        <MaterialSymbolsUpload />
-      </button>
-      <button class="btn" title="Remove" @click="emit('remove', id, props.type)">
-        <!-- Remove -->
-        <MaterialSymbolsDeleteOutlineRounded />
-      </button> <!-- TODO add confirmation -->
+    <div class="buttons-row">
+      <div class="btn-group">
+        <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
+          <!-- Bind -->
+          <AkarIconsLinkChain />
+        </button>
+        <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" title="Persist" @click="emit('persist', id)">
+          <!-- Persist -->
+          <IcBaselineSave />
+        </button>
+        <button v-if="groupData.windowId" class="btn" title="Archive" @click="emit('archive', id)">
+          <!-- Archive -->
+          <IcBaselineSaveAlt />
+        </button>
+        <button v-if="groupData.windowId && groupData.bookmarkId" title="Unbind" class="btn" @click="emit('unbind', id)">
+          <!-- Unbind -->
+          <StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink />
+        </button>
+        <button v-if="groupData.bookmarkId && !groupData.windowId" class="btn" title="Restore" @click="emit('restore', id)">
+          <!-- Restore -->
+          <MaterialSymbolsUpload />
+        </button>
+        <button class="btn" title="Remove" @click="emit('remove', id, props.type)">
+          <!-- Remove -->
+          <MaterialSymbolsDeleteOutlineRounded />
+        </button> <!-- TODO add confirmation -->
+      </div>
     </div>
     <ul class="tab-list">
       <li v-for="item in groupData.tabs" :key="item.id" class="tab-item">
@@ -82,7 +86,6 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
   display: flex;
   flex-direction: column;
   align-self: flex-start;
-  /* border: 1px solid; */
   border-radius: var(--radius);
   max-height: 25rem;
   width: 20rem;
@@ -93,6 +96,9 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
   font-size: var(--text-m);
   background-color: var(--c-grey1);
   padding: var(--textFrameY) var(--textFrameX) var(--textFrameY) var(--textFrameX);
@@ -100,7 +106,7 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
 
 .title > input {
   background-color: transparent;
-  /* border: none; */
+  width: 100%;
 }
 
 .title-win {
@@ -110,7 +116,7 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
   background-color: var(--c-grey1);
 }
 
-.buttons {
+.buttons-row {
   display: flex;
   gap: var(--space-s);
   padding: var(--space-s);
@@ -122,24 +128,38 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
   padding: var(--space-l);
   padding-top: 0;
   overflow: auto;
+  font-size: var(--text-s);
+  line-height: var(--globalLineHeight);
 }
 
 .tab-item {
   display: flex;
   gap: var(--space-m);
   align-items: center;
-  color: var(c-body);
+  color: var(--c-body);
 }
 
 .tab-text {
   text-wrap: nowrap;
   overflow: hidden;
-  font-size: var(--text-s);
 }
 
 .favicon {
   width: 1rem;
   height: 1rem;
+}
+
+.btn-group {
+  display: flex;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.btn-group button {
+  border-radius: 0;
+}
+.btn-group button:not(:last-child) {
+  border-right: var(--fieldBorderWidth) solid var(--c-border);
 }
 
 /* for sidebar */
