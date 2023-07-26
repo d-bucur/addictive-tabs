@@ -193,6 +193,10 @@ export class Groups {
     }
   }
 
+  handleClose = async (winId: string, type: ListTypeEnum) => {
+    await this.closeWindow(winId)
+  }
+
   handleRename = async (id: string, value: string, type: ListTypeEnum) => {
     const group = this.selectGroup(type)[id]
     group.title = value

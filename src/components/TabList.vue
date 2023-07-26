@@ -4,8 +4,10 @@ import type { IGroup, ListTypeEnum } from '~/logic/groupUtils'
 import IcRoundInsertLink from '~icons/ic/round-insert-link'
 // @ts-expect-error: is
 import AkarIconsLinkChain from '~icons/akar-icons/link-chain'
-// @ts-expect-error: still missing
+// @ts-expect-error: still
 import MaterialSymbolsDeleteOutlineRounded from '~icons/material-symbols/delete-outline-rounded'
+// @ts-expect-error: missing
+import MaterialSymbolsCancelOutline from '~icons/material-symbols/cancel-outline'
 // @ts-expect-error: block ignore
 import IcBaselineSaveAlt from '~icons/ic/baseline-save-alt'
 // @ts-expect-error: after
@@ -22,8 +24,8 @@ const props = defineProps<{
 }>()
 
 // TODO typesafe emits
-const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename', 'remove'])
-
+const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename', 'remove', 'close'])
+const extendedActions = false
 const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
 
@@ -45,11 +47,11 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
     </div>
     <div class="buttons-row">
       <div class="btn-group">
-        <button v-if="groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
+        <button v-if="extendedActions && groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
           <!-- Bind -->
           <AkarIconsLinkChain />
         </button>
-        <button v-if="groupData.windowId && groupData.bookmarkId" class="btn" title="Persist" @click="emit('persist', id)">
+        <button v-if="extendedActions && groupData.windowId && groupData.bookmarkId" class="btn" title="Persist" @click="emit('persist', id)">
           <!-- Persist -->
           <IcBaselineSave />
         </button>
@@ -65,10 +67,14 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
           <!-- Restore -->
           <MaterialSymbolsUpload />
         </button>
-        <button class="btn" title="Remove" @click="emit('remove', id, props.type)">
+        <button v-if="groupData.windowId" class="btn" title="Close" @click="emit('close', id, props.type)">
+          <MaterialSymbolsCancelOutline />
+        </button>
+        <button v-if="groupData.bookmarkId" class="btn" title="Remove" @click="emit('remove', id, props.type)">
           <!-- Remove -->
+          <!-- TODO add confirmation -->
           <MaterialSymbolsDeleteOutlineRounded />
-        </button> <!-- TODO add confirmation -->
+        </button>
       </div>
     </div>
     <ul class="tab-list">

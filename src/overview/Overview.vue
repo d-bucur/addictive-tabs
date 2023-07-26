@@ -53,6 +53,7 @@ function cleanup() {
         @archive="groupData.handleArchive"
         @rename="groupData.handleRename"
         @remove="groupData.handleRemove"
+        @close="groupData.handleClose"
       />
     </div>
     <div class="separator">
@@ -73,6 +74,7 @@ function cleanup() {
         @archive="groupData.handleArchive"
         @rename="groupData.handleRename"
         @remove="groupData.handleRemove"
+        @close="groupData.handleClose"
       />
     </div>
   </main>
