@@ -80,7 +80,7 @@ function cleanup() {
 
 <style scoped>
 .wrapper {
-  padding: var(--space-2xl);
+  padding: var(--space-xl);
   display: flex;
   flex-direction: column;
   /* text-align: center; */
