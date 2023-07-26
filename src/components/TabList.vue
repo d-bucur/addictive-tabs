@@ -83,18 +83,19 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
   flex-direction: column;
   align-self: flex-start;
   /* border: 1px solid; */
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   max-height: 25rem;
   width: 20rem;
-  background-color: rgba(249, 250, 251);
+  background-color: var(--c-background);
   overflow: hidden;
   /* box-shadow: 2px 2px 5px 3px rgba(0, 0, 0, 0.2); */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .title {
-  font-size: 1.125rem;
-  background-color: rgba(229, 231, 235)
+  font-size: var(--text-m);
+  background-color: var(--c-grey1);
+  padding: var(--textFrameY) var(--textFrameX) var(--textFrameY) var(--textFrameX);
 }
 
 .title > input {
@@ -103,34 +104,37 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
 }
 
 .title-win {
-  background-color: rgba(231, 229, 228);
-  /* @apply bg-warmgray-200 dark:bg-warmgray-900 */
+  background-color: var(--c-grey1);
 }
 .title-bound {
-  background-color: rgba(226, 232, 240);
-  /* @apply bg-bluegray-200 dark:bg-truegray-800 */
+  background-color: var(--c-grey1);
 }
 
 .buttons {
   display: flex;
-  gap: 1rem;
-  margin-left: auto;
+  gap: var(--space-s);
+  padding: var(--space-s);
+  justify-content: end;
+  width: 100%;
 }
 
 .tab-list {
-  padding: 0.5rem;
+  padding: var(--space-l);
+  padding-top: 0;
   overflow: auto;
 }
 
 .tab-item {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-m);
+  align-items: center;
+  color: var(c-body);
 }
 
 .tab-text {
   text-wrap: nowrap;
   overflow: hidden;
-  /* text-align: left; */
+  font-size: var(--text-s);
 }
 
 .favicon {

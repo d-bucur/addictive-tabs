@@ -1,5 +1,81 @@
 :root {
   --app-min-width: 700px; /*  TODO not really used any more */
+
+  /* created with https://hihayk.github.io/shaper */
+  /* TYPOGRAPHY */
+  --baseTextSize: 1rem;
+  --textSizeIncrement: 1.23;
+
+  --text-xs: calc(var(--baseTextSize) / var(--textSizeIncrement));
+  --text-s: var(--baseTextSize);
+  --text-m: calc(var(--text-s) * var(--textSizeIncrement));
+  --text-l: calc(var(--text-m) * var(--textSizeIncrement));
+  --text-xl: calc(var(--text-l) * var(--textSizeIncrement));
+
+  --lineHeightFixedAmount: 0.35rem;
+  --lineHeightRelativeAmount: 1.1em;
+  --globalLineHeight: calc(var(--lineHeightFixedAmount) + var(--lineHeightRelativeAmount));
+
+  --fontFamily: system-ui, sans-serif;
+
+  /* SPACING */
+  --unit: 0.25rem;
+  --spaceIncrement: 1.6;
+
+  --space-s: var(--unit);
+  --space-m: calc(var(--space-s) * var(--spaceIncrement));
+  --space-l: calc(var(--space-m) * var(--spaceIncrement));
+  --space-xl: calc(var(--space-l) * var(--spaceIncrement));
+  --space-2xl: calc(var(--space-xl) * var(--spaceIncrement));
+  --space-3xl: calc(var(--space-2xl) * var(--spaceIncrement));
+  --space-4xl: calc(var(--space-3xl) * var(--spaceIncrement));
+
+  /* TEXT FRAME */
+  --textFrameRatio: 2;
+  --textFrameY: 0.3rem;
+  --textFrameX: calc(var(--textFrameY) * var(--textFrameRatio));
+
+  /* COLOR */
+  --accentH: 225;
+  --accentS: 31%;
+  --accentL: 50%;
+  --c-accent: hsl(var(--accentH), var(--accentS), var(--accentL));
+  --c-accentContrasted: hsl(var(--accentH), var(--accentS), 95%);
+
+  --greyH: var(--accentH);
+  --greyS: 22%;
+  --initialGreyLightness: 93%;
+  --greyscaleLightnessIncrement: 11.3%;
+
+  --grey1L:  var(--initialGreyLightness);
+  --grey2L:  calc(var(--initialGreyLightness) - var(--greyscaleLightnessIncrement) * 1);
+  --grey3L:  calc(var(--initialGreyLightness) - var(--greyscaleLightnessIncrement) * 2);
+  --grey4L:  calc(var(--initialGreyLightness) - var(--greyscaleLightnessIncrement) * 3);
+  --grey5L:  calc(var(--initialGreyLightness) - var(--greyscaleLightnessIncrement) * 4);
+  --grey6L:  calc(var(--initialGreyLightness) - var(--greyscaleLightnessIncrement) * 5);
+  --grey7L:  calc(var(--initialGreyLightness) - var(--greyscaleLightnessIncrement) * 6);
+  --grey8L:  calc(var(--initialGreyLightness) - var(--greyscaleLightnessIncrement) * 7);
+
+  --c-grey1: hsl(var(--greyH), var(--greyS), var(--grey1L));
+  --c-grey2: hsl(var(--greyH), var(--greyS), var(--grey2L));
+  --c-grey3: hsl(var(--greyH), var(--greyS), var(--grey3L));
+  --c-grey4: hsl(var(--greyH), var(--greyS), var(--grey4L));
+  --c-grey5: hsl(var(--greyH), var(--greyS), var(--grey5L));
+  --c-grey6: hsl(var(--greyH), var(--greyS), var(--grey6L));
+  --c-grey7: hsl(var(--greyH), var(--greyS), var(--grey7L));
+  --c-grey8: hsl(var(--greyH), var(--greyS), var(--grey8L));
+
+  --c-border: hsla(var(--greyH), var(--greyS), var(--grey8L), 0.1);
+  --c-overlay: hsla(var(--greyH), var(--greyS), var(--grey8L), 0.07);
+  --c-background: white;
+  --c-body: var(--c-grey8);
+  --c-bodyDimmed: hsla(var(--greyH), var(--greyS), var(--grey8L), 0.5);
+  --c-fieldBorder: var(--c-grey2);
+  --c-buttonBg: var(--c-grey2);
+
+  /* LAYER */
+  --radius: 0.4rem;
+  --fieldBorderWidth: 2px;
 }
 
 html,
@@ -12,24 +88,53 @@ body,
   min-height: 600px;
 }
 
+html {
+  font-family: var(--fontFamily);
+  font-size: var(--text-s);
+  background-color: var(--c-overlay);
+}
+
 .btn {
-  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  /* padding: 0.25rem 0.5rem 0.25rem 0.5rem; */
+  padding: var(--textFrameY) var(--textFrameX) var(--textFrameY) var(--textFrameX);
+  background-color: var(--c-buttonBg);
+  border-radius: var(--radius);
+  font-size: var(--text-xs);
+  /* TODO remove apply */
   @apply px-2 py-1 rounded inline-block
     bg-coolgray-400 text-white dark:text-black  cursor-pointer
     hover:bg-teal-700
     disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50;
 }
 
+.btn:hover {
+  background-color: var(--c-accent);
+  color: var(--c-accentContrasted);
+}
+
 .icon-btn {
   @apply inline-block cursor-pointer select-none
     opacity-75 transition duration-200 ease-in-out
     hover:opacity-100 hover:text-teal-600;
-  font-size: 0.9em;
+  font-size: var(--text-s);
+  color: var(--c-body);
 }
 
 /* for sidebar */
 @media (max-width: 500px) {
   :root {
     --app-min-width: 1px !important;
+  }
+}
+
+@media(prefers-color-scheme: dark) {
+  :root {
+    --c-border: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.1);
+    --c-overlay: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.07);
+    --c-background: var(--c-grey8);
+    --c-body: var(--c-grey1);
+    --c-bodyDimmed: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.5);
+    --c-fieldBorder: var(--c-grey6);
+    --c-buttonBg: var(--c-grey6);
   }
 }

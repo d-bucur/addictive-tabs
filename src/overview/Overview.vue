@@ -56,7 +56,9 @@ function cleanup() {
       />
     </div>
     <div class="separator">
-      Archived
+      <div class="separator-text">
+        Archived
+      </div>
     </div>
     <div class="tab-list">
       <TabList
@@ -78,7 +80,7 @@ function cleanup() {
 
 <style scoped>
 .wrapper {
-  padding: 1.25rem;
+  padding: var(--space-2xl);
   display: flex;
   flex-direction: column;
   /* text-align: center; */
@@ -87,10 +89,20 @@ function cleanup() {
 .tab-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 1em;
+  gap: var(--space-xl);
 }
 
 .separator {
-  border-top: 1px solid;
+  border-top: var(--fieldBorderWidth) dashed var(--c-fieldBorder);
+  font-size: var(--text-xs);
+  text-align: center;
+  margin-top: var(--text-s);
+  display: flex;
+  justify-content: center;
+}
+
+.separator-text {
+  transform: translateY(calc(var(--text-xs) * -1));
+  width: fit-content;
 }
 </style>
