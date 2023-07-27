@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IGroup, ListTypeEnum } from '~/logic/groupUtils'
+import type { IGroup, ITabItem, ListTypeEnum } from '~/logic/groupUtils'
 // @ts-expect-error: ts
 import IcRoundInsertLink from '~icons/ic/round-insert-link'
 // @ts-expect-error: is
@@ -33,6 +33,16 @@ const isWindow = computed(() => props.groupData.windowId && !props.groupData.boo
 
 // @ts-expect-error: value exists on event
 const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.value, props.type)
+
+function itemStyle(item: ITabItem): {} {
+  if (item.subGroup?.color) {
+    return {
+      'border-left': `var(--fieldBorderWidth) solid ${item.subGroup!.color}`,
+      'padding-left': 'var(--space-s)',
+    }
+  }
+  return {}
+}
 
 // onMounted(() => console.log('Updating list', props.groupData))
 </script>
@@ -87,7 +97,7 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
     <ul class="tab-list">
       <li v-for="item in groupData.tabs" :key="item.id" class="tab-item">
         <img :src="item.favIconUrl" class="favicon">
-        <div :title="item.url" class="tab-text">
+        <div :title="item.url" class="tab-text" :style="itemStyle(item)">
           {{ item.title }}
         </div>
       </li>

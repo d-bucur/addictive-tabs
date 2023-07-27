@@ -3,13 +3,15 @@
 ## first release (can release to store and use personally)
 - favicons don't work after first load
 - check all operations
+- possibility to change root bm folder
+- ask first time configuration: root bm and later persist method (bm vs localstorage)
+- dark mode broken
+- revise css and better colors
 
 ## post release
 - bindings do not persist between browser reloads as windows change ids
-- possibility to change root bm folder
-- ask first time configuration: root bm and later persist method (bm vs localstorage)
 - make it clearer which tabs are discarded
-- chrome groups support: one level of bm folder nesting maps to group
+- chrome groups support: one level of bm folder nesting maps to group. optional groups permission
 - move ownership of groups to background script so updated can happen in the bg
 - auto sync (needs details)
 - abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
@@ -18,6 +20,7 @@
 - masonry grid for groups. or wait for grid implementation
 
 ## nice to have
+- chrome.tabGroups types not working
 - click individual tabs to go to them
 - drag & drop functionality
 - order windows by last used
@@ -26,9 +29,9 @@
 - toggle mode that shows address under tab titles
 - search bar
 - move current window into existing bookmark?
-- custom window names do not persist on reload
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
+- custom window names do not persist on reload
   
 ## component libraries/ui helpers
 - https://every-layout.dev/rudiments/modular-scale/

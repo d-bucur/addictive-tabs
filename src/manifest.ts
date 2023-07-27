@@ -45,6 +45,7 @@ export async function getManifest() {
       'bookmarks',
       'storage',
       'activeTab',
+      'tabGroups',
     ],
     host_permissions: ['*://*/*'],
     content_security_policy: {
