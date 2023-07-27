@@ -3,7 +3,7 @@ import { StateChangeHandler } from '~/logic/changeHandlers'
 import { Groups } from '~/logic/groups'
 import { ListTypeEnum } from '~/logic/groupUtils'
 
-const bookmarkRootId = ref('2000')
+const bookmarkRootId = ref('2000') // TODO should be reactive
 let groupData: Groups // TODO refactor name
 let changeHandlers: StateChangeHandler
 const loadingReady = ref(false)
@@ -11,7 +11,7 @@ const loadingReady = ref(false)
 onMounted(async () => {
   // TODO values might be reset improperly when in HMR here
   bookmarkRootId.value = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
-  groupData = new Groups(bookmarkRootId.value) // TODO pass reactive
+  groupData = new Groups(bookmarkRootId.value)
   await groupData.refreshView()
   loadingReady.value = true
   window.addEventListener('beforeunload', _event => cleanup())
