@@ -40,6 +40,7 @@ browser.runtime.onInstalled.addListener(async () => {
   await createRootBmFolder()
 })
 
+// TODO value might not be set by the time this runs. need to lock it
 // TODO better message handling when needed
 // @ts-expect-error: sendResponse accepts params
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => sendResponse({ actualBookmarkRootId }))

@@ -9,7 +9,6 @@ let changeHandlers: StateChangeHandler
 const loadingReady = ref(false)
 
 onMounted(async () => {
-  // TODO values might be reset improperly when in HMR here
   bookmarkRootId.value = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
   groupData = new Groups(bookmarkRootId.value)
   await groupData.refreshView()
@@ -37,6 +36,7 @@ function cleanup() {
 <template>
   <main v-if="loadingReady" class="wrapper">
     <div class="menu-bar">
+      <!-- TODO should go in the archived section -->
       <BookmarkRootSelector v-model:root-id="bookmarkRootId" />
       <button id="full-btn" class="btn" @click="openOverviewPage">
         Full
