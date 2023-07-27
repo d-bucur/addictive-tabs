@@ -173,19 +173,6 @@ function itemStyle(item: ITabItem): {} {
   height: 1rem;
 }
 
-.btn-group {
-  display: flex;
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.btn-group button {
-  border-radius: 0;
-}
-.btn-group button:not(:last-child) {
-  border-right: var(--fieldBorderWidth) solid var(--c-border);
-}
-
 /* for sidebar */
 @media (max-width: 500px) {
   .tab-group-card {

@@ -94,6 +94,7 @@ html {
   background-color: var(--c-overlay);
 }
 
+/* TODO remove @apply */
 .btn {
   /* padding: 0.25rem 0.5rem 0.25rem 0.5rem; */
   padding: var(--textFrameY) var(--textFrameX) var(--textFrameY) var(--textFrameX);
@@ -110,6 +111,24 @@ html {
 .btn:hover {
   background-color: var(--c-accent);
   color: var(--c-accentContrasted);
+}
+
+.btn-selected {
+  background-color: var(--c-grey4);
+  color: var(--c-accentContrasted);
+}
+
+.btn-group {
+  display: flex;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.btn-group button {
+  border-radius: 0;
+}
+.btn-group button:not(:last-child) {
+  border-right: var(--fieldBorderWidth) solid var(--c-border);
 }
 
 .icon-btn {

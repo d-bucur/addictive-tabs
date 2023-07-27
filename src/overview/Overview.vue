@@ -37,7 +37,7 @@ function cleanup() {
 <template>
   <main v-if="loadingReady" class="wrapper">
     <div class="menu-bar">
-      <BookmarkRootSelector v-model="bookmarkRootId" />
+      <BookmarkRootSelector v-model:root-id="bookmarkRootId" />
       <button id="full-btn" class="btn" @click="openOverviewPage">
         Full
       </button>

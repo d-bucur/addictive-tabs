@@ -12,3 +12,12 @@ export async function getFullPath(bmId: string | undefined): Promise<IBookmarkFo
     title: currentNode[0].title,
   })
 }
+
+export async function getSiblings(bmId: string): Promise<IBookmarkFolder[]> {
+  const currentNode = await browser.bookmarks.get(bmId)
+  const parent = await browser.bookmarks.getSubTree(currentNode[0].parentId!)
+  return parent[0].children!.map(b => ({
+    id: b.id,
+    title: b.title,
+  }))
+}
