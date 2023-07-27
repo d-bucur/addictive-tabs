@@ -2,29 +2,35 @@
 // @ts-expect-error: aa
 import MaterialSymbolsFolderManagedOutline from '~icons/material-symbols/folder-managed-outline'
 import type { IBookmarkFolder } from '~/logic/bookmarkUtils'
-import { getFullPath } from '~/logic/bookmarkUtils'
+import { getFullPath, getSiblings } from '~/logic/bookmarkUtils'
 
 const props = defineProps<{
-  modelValue: string
+  rootId: string
 }>()
-defineEmits(['update:modelValue'])
+defineEmits(['update:rootId'])
 
 const folderPath = ref([] as IBookmarkFolder[])
 
 const folderName = computed(() => folderPath.value.length > 0 ? folderPath.value[folderPath.value.length - 1].title : '')
 
+const siblings = ref([] as IBookmarkFolder[])
+
+// TODO make modelValue reactive
 onMounted(async () => {
-  folderPath.value = await getFullPath(props.modelValue)
+  folderPath.value = await getFullPath(props.rootId)
+  siblings.value = await getSiblings(props.rootId)
 })
 </script>
 
 <template>
   <div class="bm-selector">
-    <button class="btn" title="Configuration coming soon">
+    <button class="btn" :title="`Root folder (config coming soon): ${folderPath.map(f => f.title).join('/')}`">
       <MaterialSymbolsFolderManagedOutline />
     </button>
-    <div :title="`Root folder: ${folderPath.map(f => f.title).join('/')}`">
-      {{ folderName }}
+    <div class="btn-group">
+      <button v-for="s in siblings" :key="s.id" :class="{ 'btn-selected': s.id === rootId }" class="btn">
+        {{ s.title }}
+      </button>
     </div>
   </div>
 </template>

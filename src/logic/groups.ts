@@ -95,9 +95,6 @@ export class Groups {
         tabs.subGroup.title = groupData.title
       }
     }
-    // @ts-expect-error: chrome types not working
-    const res = await chrome.tabGroups.query({ windowId: parseInt(winId) })
-    // console.log('chrome groups', res)
   }
 
   refreshBindReferences() {
