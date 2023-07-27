@@ -8,8 +8,10 @@ import AkarIconsLinkChain from '~icons/akar-icons/link-chain'
 import MaterialSymbolsDeleteOutlineRounded from '~icons/material-symbols/delete-outline-rounded'
 // @ts-expect-error: missing
 import MaterialSymbolsCancelOutline from '~icons/material-symbols/cancel-outline'
-// @ts-expect-error: block ignore
+// @ts-expect-error: block
 import IcBaselineSaveAlt from '~icons/ic/baseline-save-alt'
+// @ts-expect-error: ignore
+import MaterialSymbolsMemoryAltOutlineRounded from '~icons/material-symbols/memory-alt-outline-rounded'
 // @ts-expect-error: after
 import IcBaselineSave from '~icons/ic/baseline-save'
 // @ts-expect-error: 6 years
@@ -24,7 +26,7 @@ const props = defineProps<{
 }>()
 
 // TODO typesafe emits
-const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename', 'remove', 'close'])
+const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename', 'remove', 'close', 'discard'])
 const extendedActions = false
 const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
@@ -59,6 +61,10 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
           <!-- Archive -->
           <IcBaselineSaveAlt />
         </button>
+        <button v-if="groupData.windowId" class="btn" title="Free from memory" @click="emit('discard', id)">
+          <!-- Free tab from memory -->
+          <MaterialSymbolsMemoryAltOutlineRounded />
+        </button>
         <button v-if="groupData.windowId && groupData.bookmarkId" title="Unbind" class="btn" @click="emit('unbind', id)">
           <!-- Unbind -->
           <StreamlineInterfaceLinkBrokenBreakBrokenHyperlinkLinkRemoveUnlink />
@@ -68,6 +74,7 @@ const titleUpdateHandler = (e: Event) => emit('rename', props.id, e.target?.valu
           <MaterialSymbolsUpload />
         </button>
         <button v-if="groupData.windowId" class="btn" title="Close" @click="emit('close', id, props.type)">
+          <!-- Close window -->
           <MaterialSymbolsCancelOutline />
         </button>
         <button v-if="groupData.bookmarkId" class="btn" title="Remove" @click="emit('remove', id, props.type)">

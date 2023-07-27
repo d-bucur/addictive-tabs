@@ -3,6 +3,7 @@ import type { IGroup } from './groupUtils'
 import { ListTypeEnum, makeGroupFromBm, makeGroupFromWindow, makeGroupTitle } from './groupUtils'
 import type { Dictionary } from './utils'
 import { groupBy } from './utils'
+import('webextension-polyfill') // make sure polyfill is imported, prevents issue with HMR
 
 export class Groups {
   groups: { open: Dictionary<IGroup>; archived: Dictionary<IGroup> } = reactive({ open: {}, archived: {} })
@@ -195,6 +196,11 @@ export class Groups {
 
   handleClose = async (winId: string, type: ListTypeEnum) => {
     await this.closeWindow(winId)
+  }
+
+  handleDiscard = async (winId: string, type: ListTypeEnum) => {
+    const windows = this.groups.open[winId].tabs.map(t => parseInt(t.id))
+    windows.map(w => browser.tabs.discard(w).catch(e => console.log('Error discarding tab', e)))
   }
 
   handleRename = async (id: string, value: string, type: ListTypeEnum) => {
