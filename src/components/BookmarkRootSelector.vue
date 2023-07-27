@@ -20,13 +20,17 @@ onMounted(async () => {
   folderPath.value = await getFullPath(props.rootId)
   siblings.value = await getSiblings(props.rootId)
 })
+
+function openConfigPage() {
+  browser.tabs.create({ url: `chrome://bookmarks/?id=${props.rootId}` })
+}
 </script>
 
 <template>
   <div class="bm-selector">
-    <button class="btn" :title="`Root folder (config coming soon): ${folderPath.map(f => f.title).join('/')}`">
+    <a class="btn" :title="`Root folder (config coming soon): ${folderPath.map(f => f.title).join('/')}`" @click="openConfigPage">
       <MaterialSymbolsFolderManagedOutline />
-    </button>
+    </a>
     <div class="btn-group">
       <button v-for="s in siblings" :key="s.id" :class="{ 'btn-selected': s.id === rootId }" class="btn">
         {{ s.title }}
