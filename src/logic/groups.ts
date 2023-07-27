@@ -63,6 +63,7 @@ export class Groups {
     // console.log('Refreshing window', winId)
     // console.log('refreshing window', winId)
     const group = makeGroupFromWindow(winId, tabs)
+    await this.fillSubGroups(group, winId)
     const boundBmId = this.bindings.windowToBookmark[winId]
     if (boundBmId)
       group.title = (await browser.bookmarks.get(boundBmId))[0].title
@@ -82,6 +83,21 @@ export class Groups {
         if (!canIdBeInvalid)
           console.error(reason)
       })
+  }
+
+  async fillSubGroups(group: IGroup, winId: string) {
+    // TODO optimize API calls
+    for (const tabs of group.tabs) {
+      if (tabs.subGroup && tabs.subGroup.id >= 0) {
+        // @ts-expect-error: chrome types not working
+        const groupData = await chrome.tabGroups.get(tabs.subGroup.id)
+        tabs.subGroup!.color = groupData.color
+        tabs.subGroup.title = groupData.title
+      }
+    }
+    // @ts-expect-error: chrome types not working
+    const res = await chrome.tabGroups.query({ windowId: parseInt(winId) })
+    console.log('chrome groups', res)
   }
 
   refreshBindReferences() {

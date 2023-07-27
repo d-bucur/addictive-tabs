@@ -6,6 +6,7 @@ export interface ITabItem {
   title: string
   url: string
   favIconUrl?: string
+  subGroup?: ISubGroup
 }
 
 export interface IGroup {
@@ -13,6 +14,12 @@ export interface IGroup {
   windowId?: string
   bookmarkId?: string
   tabs: Array<ITabItem>
+}
+
+export interface ISubGroup {
+  id: number
+  color?: string
+  title?: string
 }
 
 export enum ListTypeEnum {
@@ -26,6 +33,8 @@ function convertTab(tab: Tabs.Tab): ITabItem {
     title: tab.title!,
     url: tab.url!,
     favIconUrl: faviconURL(tab.url),
+    // @ts-expect-error: groupId missing from types for some reason
+    subGroup: { id: tab.groupId },
   }
 }
 
