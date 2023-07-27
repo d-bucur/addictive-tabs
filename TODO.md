@@ -1,12 +1,12 @@
 ## wip
+- possibility to change root bm folder
 
 ## first release (can release to store and use personally)
-- favicons don't work after first load
 - check all operations
-- possibility to change root bm folder
 - ask first time configuration: root bm and later persist method (bm vs localstorage)
 - dark mode broken
 - revise css and better colors
+- bug: sometimes favicons don't update properly until extension is reloaded
 
 ## post release
 - bindings do not persist between browser reloads as windows change ids
@@ -15,12 +15,12 @@
 - move ownership of groups to background script so updated can happen in the bg
 - auto sync (needs details)
 - abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
-- icon for which tabs have changed compared to bookmark
+- icon for which tabs have changed compared to bookmark. removed items show greyed out
 - firefox port when manifest 3 is ready https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
 - masonry grid for groups. or wait for grid implementation
 
 ## nice to have
-- chrome.tabGroups types not working
+- chrome.tabGroups ts types not working
 - click individual tabs to go to them
 - drag & drop functionality
 - order windows by last used

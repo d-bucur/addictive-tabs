@@ -3,14 +3,15 @@ import { StateChangeHandler } from '~/logic/changeHandlers'
 import { Groups } from '~/logic/groups'
 import { ListTypeEnum } from '~/logic/groupUtils'
 
-let bookmarkRootId = '2000'
-let groupData: Groups // TODO refactor naming
+const bookmarkRootId = ref('2000')
+let groupData: Groups // TODO refactor name
 let changeHandlers: StateChangeHandler
 const loadingReady = ref(false)
 
 onMounted(async () => {
-  bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
-  groupData = new Groups(bookmarkRootId)
+  // TODO values might be reset improperly when in HMR here
+  bookmarkRootId.value = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
+  groupData = new Groups(bookmarkRootId.value) // TODO pass reactive
   await groupData.refreshView()
   loadingReady.value = true
   window.addEventListener('beforeunload', _event => cleanup())
@@ -36,6 +37,7 @@ function cleanup() {
 <template>
   <main v-if="loadingReady" class="wrapper">
     <div class="menu-bar">
+      <BookmarkRootSelector v-model="bookmarkRootId" />
       <button id="full-btn" class="btn" @click="openOverviewPage">
         Full
       </button>
@@ -119,8 +121,10 @@ function cleanup() {
 }
 
 .menu-bar {
+  padding-bottom: var(--space-l);
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media (min-width: 800px) {

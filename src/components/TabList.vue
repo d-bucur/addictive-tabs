@@ -27,7 +27,7 @@ const props = defineProps<{
 
 // TODO typesafe emits
 const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename', 'remove', 'close', 'discard'])
-const extendedActions = false
+const extendedActions = true
 const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
 
@@ -59,6 +59,10 @@ function itemStyle(item: ITabItem): {} {
     </div>
     <div class="buttons-row">
       <div class="btn-group">
+        <button v-if="groupData.windowId" class="btn" title="Archive" @click="emit('archive', id)">
+          <!-- Archive -->
+          <IcBaselineSaveAlt />
+        </button>
         <button v-if="extendedActions && groupData.windowId && !groupData.bookmarkId" class="btn" title="Bind" @click="emit('bind', id)">
           <!-- Bind -->
           <AkarIconsLinkChain />
@@ -66,10 +70,6 @@ function itemStyle(item: ITabItem): {} {
         <button v-if="extendedActions && groupData.windowId && groupData.bookmarkId" class="btn" title="Persist" @click="emit('persist', id)">
           <!-- Persist -->
           <IcBaselineSave />
-        </button>
-        <button v-if="groupData.windowId" class="btn" title="Archive" @click="emit('archive', id)">
-          <!-- Archive -->
-          <IcBaselineSaveAlt />
         </button>
         <button v-if="groupData.windowId" class="btn" title="Free from memory" @click="emit('discard', id)">
           <!-- Free tab from memory -->
