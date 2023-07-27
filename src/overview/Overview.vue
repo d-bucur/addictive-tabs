@@ -8,7 +8,7 @@ let groupData: Groups // TODO refactor naming
 let changeHandlers: StateChangeHandler
 const loadingReady = ref(false)
 
-onBeforeMount(async () => {
+onMounted(async () => {
   bookmarkRootId = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
   groupData = new Groups(bookmarkRootId)
   await groupData.refreshView()
@@ -54,6 +54,7 @@ function cleanup() {
         @rename="groupData.handleRename"
         @remove="groupData.handleRemove"
         @close="groupData.handleClose"
+        @discard="groupData.handleDiscard"
       />
     </div>
     <div class="separator">
@@ -75,6 +76,7 @@ function cleanup() {
         @rename="groupData.handleRename"
         @remove="groupData.handleRemove"
         @close="groupData.handleClose"
+        @discard="groupData.handleDiscard"
       />
     </div>
   </main>

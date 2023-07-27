@@ -1,7 +1,6 @@
 ## wip
 
 ## first release (can release to store and use personally)
-- hotreload bugged: check main branch. or maybe due to separating ts code browser polyfill does not work
 - favicons don't work after first load
 - check all operations
 
@@ -9,7 +8,7 @@
 - bindings do not persist between browser reloads as windows change ids
 - possibility to change root bm folder
 - ask first time configuration: root bm and later persist method (bm vs localstorage)
-- discard action: [discard](https://developer.chrome.com/docs/extensions/reference/tabs/#method-discard) all tabs
+- make it clearer which tabs are discarded
 - chrome groups support: one level of bm folder nesting maps to group
 - move ownership of groups to background script so updated can happen in the bg
 - auto sync (needs details)
