@@ -9,8 +9,9 @@ let changeHandlers: StateChangeHandler
 const loadingReady = ref(false)
 
 onMounted(async () => {
-  bookmarkRootId.value = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
-//  await init()
+  const bmRootResp = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' }))
+  bookmarkRootId.value = bmRootResp
+//  console.log('bookmarkRootId', bookmarkRootId.value)
 })
 
 onUnmounted(() => {

@@ -12,7 +12,6 @@ const emit = defineEmits(['update:rootId'])
 const folderPath = ref([] as IBookmarkFolder[])
 const siblings = ref([] as IBookmarkFolder[])
 
-// TODO make modelValue reactive
 onMounted(async () => {
   folderPath.value = await getFullPath(props.rootId)
   siblings.value = await getSiblings(props.rootId)
@@ -25,10 +24,10 @@ function openConfigPage() {
 
 <template>
   <div class="bm-selector">
-    <a class="btn" :title="`Root folder (config coming soon): ${folderPath.map(f => f.title).join('/')}`" @click="openConfigPage">
-      <MaterialSymbolsFolderManagedOutline />
-    </a>
     <div class="btn-group">
+      <button class="btn" :title="`Root folder: ${folderPath.map(f => f.title).join('/')} (config coming soon)`" @click="openConfigPage">
+        <MaterialSymbolsFolderManagedOutline />
+      </button>
       <button v-for="s in siblings" :key="s.id" :class="{ 'btn-selected': s.id === rootId }" class="btn" @click="emit('update:rootId', s.id)">
         {{ s.title }}
       </button>

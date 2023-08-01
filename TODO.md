@@ -1,7 +1,6 @@
 ## wip
 
 ## first release (can release to store and use personally)
-- bug: sometimes root folder id is broken. see main.ts
 - check all operations
 - revise css and better colors
 - bug: sometimes favicons don't update properly until extension is reloaded
