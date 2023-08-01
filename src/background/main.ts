@@ -9,6 +9,12 @@ const DEFAULT_SPACES = ['Main', 'Learn', 'Distracting']
 
 let actualBookmarkRootId: string | undefined
 
+async function getBookmarkRootId() {
+  if (!actualBookmarkRootId)
+    await createRootBmFolder()
+  return actualBookmarkRootId
+}
+
 async function createRootBmFolder() {
   const otherFolder = (await browser.bookmarks.getTree())[0].children![1]
   console.log('using Other Bookmarks folder', otherFolder)
@@ -37,10 +43,11 @@ async function createRootBmFolder() {
 
 browser.runtime.onInstalled.addListener(async () => {
   console.log('Extension installed')
-  await createRootBmFolder()
 })
 
-// TODO value might not be set by the time this runs. need to lock it
 // TODO better message handling when needed
-// @ts-expect-error: sendResponse accepts params
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => sendResponse({ actualBookmarkRootId }))
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // @ts-expect-error: sendResponse accepts params
+  (async () => sendResponse(await getBookmarkRootId()))()
+  return true
+})
