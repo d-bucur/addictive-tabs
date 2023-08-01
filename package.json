@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "private": true,
   "packageManager": "pnpm@8.3.1",
-  "description": "A tab manager that lets you easily declutter your workspace by saving active windows to bookmarks that can be reopened later",
+  "description": "Tab manager that lets you easily declutter your workspace by archiving windows to bookmarks",
   "scripts": {
     "dev": "npm run clear && cross-env NODE_ENV=development run-p dev:*",
     "dev-firefox": "npm run clear && cross-env NODE_ENV=development EXTENSION=firefox run-p dev:*",

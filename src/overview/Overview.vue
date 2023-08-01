@@ -10,26 +10,35 @@ const loadingReady = ref(false)
 
 onMounted(async () => {
   bookmarkRootId.value = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' })).actualBookmarkRootId
-  groupData = new Groups(bookmarkRootId.value)
-  await groupData.refreshView()
-  loadingReady.value = true
-  window.addEventListener('beforeunload', _event => cleanup())
-  changeHandlers = new StateChangeHandler(groupData)
-  changeHandlers.addStateChangeHandlers()
+//  await init()
 })
 
 onUnmounted(() => {
   cleanup()
-  changeHandlers.removeStateChangeHandlers()
+})
+
+watch(bookmarkRootId, async (_val, _old) => {
+  cleanup()
+  await init()
 })
 
 function openOverviewPage() {
   browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
 }
 
+async function init() {
+  groupData = new Groups(bookmarkRootId.value)
+  await groupData.refreshView()
+  loadingReady.value = true
+  window.addEventListener('beforeunload', _event => cleanup())
+  changeHandlers = new StateChangeHandler(groupData)
+  changeHandlers.addStateChangeHandlers()
+}
+
 function cleanup() {
   // console.log('Unmounting, saving state')
-  groupData.saveState()
+  groupData?.saveState()
+  changeHandlers?.removeStateChangeHandlers()
 }
 </script>
 
@@ -41,6 +50,11 @@ function cleanup() {
       <button id="full-btn" class="btn" @click="openOverviewPage">
         Full
       </button>
+    </div>
+    <div class="separator">
+      <div class="separator-text">
+        Windows
+      </div>
     </div>
     <div class="tab-list">
       <TabList
@@ -121,7 +135,6 @@ function cleanup() {
 }
 
 .menu-bar {
-  padding-bottom: var(--space-l);
   display: flex;
   justify-content: space-between;
   align-items: center;

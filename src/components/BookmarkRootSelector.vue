@@ -7,12 +7,9 @@ import { getFullPath, getSiblings } from '~/logic/bookmarkUtils'
 const props = defineProps<{
   rootId: string
 }>()
-defineEmits(['update:rootId'])
+const emit = defineEmits(['update:rootId'])
 
 const folderPath = ref([] as IBookmarkFolder[])
-
-const folderName = computed(() => folderPath.value.length > 0 ? folderPath.value[folderPath.value.length - 1].title : '')
-
 const siblings = ref([] as IBookmarkFolder[])
 
 // TODO make modelValue reactive
@@ -32,7 +29,7 @@ function openConfigPage() {
       <MaterialSymbolsFolderManagedOutline />
     </a>
     <div class="btn-group">
-      <button v-for="s in siblings" :key="s.id" :class="{ 'btn-selected': s.id === rootId }" class="btn">
+      <button v-for="s in siblings" :key="s.id" :class="{ 'btn-selected': s.id === rootId }" class="btn" @click="emit('update:rootId', s.id)">
         {{ s.title }}
       </button>
     </div>
