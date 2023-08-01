@@ -3,7 +3,7 @@ import { StateChangeHandler } from '~/logic/changeHandlers'
 import { Groups } from '~/logic/groups'
 import { ListTypeEnum } from '~/logic/groupUtils'
 
-const bookmarkRootId = ref('2000') // TODO should be reactive
+const bookmarkRootId = ref('-1')
 let groupData: Groups // TODO refactor name
 let changeHandlers: StateChangeHandler
 const loadingReady = ref(false)

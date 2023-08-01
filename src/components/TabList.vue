@@ -48,11 +48,7 @@ function itemStyle(item: ITabItem): {} {
 </script>
 
 <template>
-  <div
-    class="tab-group-card"
-    flex flex-col self-start border-rounded w-xs max-h-100
-    bg-coolgray-50 dark:bg-coolgray-800 shadow-md
-  >
+  <div class="tab-group-card">
     <div class="title" :class="{ 'title-win': isWindow, 'title-bound': isBounded }">
       <input :value="groupData.title" @change="titleUpdateHandler">
       <IcRoundInsertLink v-if="isBounded" title="Linked to bookmark" />
@@ -96,7 +92,7 @@ function itemStyle(item: ITabItem): {} {
     </div>
     <ul class="tab-list">
       <li v-for="item in groupData.tabs" :key="item.id" class="tab-item">
-        <img :src="item.favIconUrl" class="favicon">
+        <img :src="item.favIconUrl" class="favicon" alt="icon">
         <div :title="item.url" class="tab-text" :style="itemStyle(item)">
           {{ item.title }}
         </div>

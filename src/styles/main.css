@@ -83,7 +83,6 @@ body,
 #app {
   margin: 0;
   padding: 0;
-  /* @apply bg-coolgray-100 dark:bg-coolgray-700 dark:text-white; */
   min-width: var(--app-min-width);
   min-height: 600px;
 }
@@ -94,18 +93,13 @@ html {
   background-color: var(--c-overlay);
 }
 
-/* TODO remove @apply */
 .btn {
   /* padding: 0.25rem 0.5rem 0.25rem 0.5rem; */
   padding: var(--textFrameY) var(--textFrameX) var(--textFrameY) var(--textFrameX);
   background-color: var(--c-grey1);
   border-radius: var(--radius);
   font-size: var(--text-xs);
-  /* TODO remove apply */
-  @apply px-2 py-1 rounded inline-block
-    bg-coolgray-400 text-white dark:text-black  cursor-pointer
-    hover:bg-teal-700
-    disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50;
+  user-select: none;
 }
 
 .btn:hover {
@@ -132,9 +126,6 @@ html {
 }
 
 .icon-btn {
-  @apply inline-block cursor-pointer select-none
-    opacity-75 transition duration-200 ease-in-out
-    hover:opacity-100 hover:text-teal-600;
   font-size: var(--text-s);
   color: var(--c-body);
 }
