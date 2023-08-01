@@ -1,21 +1,21 @@
 ## wip
-- possibility to change root bm folder
 
 ## first release (can release to store and use personally)
 - bug: sometimes root folder id is broken. see main.ts
 - check all operations
-- dark mode broken
 - revise css and better colors
 - bug: sometimes favicons don't update properly until extension is reloaded
-- add full view shortcut
+- add full view key shortcut
 - fix options page
 
 ## post release
+- dark mode broken
 - bindings do not persist between browser reloads as windows change ids
 - make it clearer which tabs are discarded
 - chrome groups support: one level of bm folder nesting maps to group. optional groups permission
 - first time configuration: root bm and later persist method (bm vs localstorage)
 - move ownership of groups to background script so updated can happen in the bg?
+- changing bookmark root redraws whole page. Should avoid flickering
 - auto sync (needs details)
 - abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
 - icon for which tabs have changed compared to bookmark. removed items show greyed out
