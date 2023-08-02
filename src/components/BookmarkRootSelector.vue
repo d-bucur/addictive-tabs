@@ -25,10 +25,16 @@ function openConfigPage() {
 <template>
   <div class="bm-selector">
     <div class="btn-group">
-      <button class="btn" :title="`Root folder: ${folderPath.map(f => f.title).join('/')} (config coming soon)`" @click="openConfigPage">
+      <button
+        class="btn" :title="`Root folder: ${folderPath.map(f => f.title).join('/')} (config coming soon)`"
+        @click="openConfigPage"
+      >
         <MaterialSymbolsFolderManagedOutline />
       </button>
-      <button v-for="s in siblings" :key="s.id" :class="{ 'btn-selected': s.id === rootId }" class="btn" @click="emit('update:rootId', s.id)">
+      <button
+        v-for="s in siblings" :key="s.id" :class="{ 'btn-selected': s.id === rootId }" class="btn"
+        @click="emit('update:rootId', s.id)"
+      >
         {{ s.title }}
       </button>
     </div>

@@ -1,3 +1,5 @@
+// import 'webextension-polyfill'
+
 // only on dev mode
 if (import.meta.hot) {
   // @ts-expect-error for background HMR
@@ -7,9 +9,12 @@ if (import.meta.hot) {
 const DEFAULT_BOOKMARK_NAME = 'Addictive Tabs'
 const DEFAULT_SPACES = ['Main', 'Learn', 'Distracting']
 
-let actualBookmarkRootId: string | undefined
+let actualBookmarkRootId: string | undefined // TODO avoid global variable (or rename)
 
 async function getBookmarkRootId() {
+  const items = await browser.storage.local.get('bookmarkRootId')
+  actualBookmarkRootId = items.bookmarkRootId
+
   if (!actualBookmarkRootId)
     await createRootBmFolder()
   return actualBookmarkRootId

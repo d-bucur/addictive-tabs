@@ -1,7 +1,6 @@
 ## wip
 
 ## first release (can release to store and use personally)
-- store current folder
 - check all operations
 - revise css and better colors
 - bug: sometimes favicons don't update properly until extension is reloaded
@@ -9,6 +8,7 @@
 - fix options page
 
 ## post release
+- bindings should be saved to localstorage ASAP instead of on close
 - scrollable folder selection with max width
 - dark mode broken
 - bindings do not persist between browser reloads as windows change ids

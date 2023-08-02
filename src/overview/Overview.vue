@@ -18,7 +18,8 @@ onUnmounted(() => {
   cleanup()
 })
 
-watch(bookmarkRootId, async (_val, _old) => {
+watch(bookmarkRootId, async (val, _old) => {
+  browser.storage.local.set({ bookmarkRootId: val })
   cleanup()
   await init()
 })
