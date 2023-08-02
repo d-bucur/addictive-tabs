@@ -3,11 +3,10 @@
 ## first release (can release to store and use personally)
 - check all operations
 - revise css and better colors
-- bug: sometimes favicons don't update properly until extension is reloaded
 - add full view key shortcut
-- fix options page
 
 ## post release
+- bug: sometimes favicons don't update properly until extension is reloaded
 - bindings should be saved to localstorage ASAP instead of on close
 - scrollable folder selection with max width
 - dark mode broken

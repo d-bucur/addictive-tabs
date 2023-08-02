@@ -23,11 +23,11 @@ const props = defineProps<{
   id: string
   groupData: IGroup
   type: ListTypeEnum
+  extendedActions: boolean
 }>()
 
 // TODO typesafe emits
 const emit = defineEmits(['bind', 'persist', 'restore', 'unbind', 'archive', 'rename', 'remove', 'close', 'discard'])
-const extendedActions = true
 const isBounded = computed(() => props.groupData.windowId && props.groupData.bookmarkId)
 const isWindow = computed(() => props.groupData.windowId && !props.groupData.bookmarkId)
 
@@ -67,7 +67,7 @@ function itemStyle(item: ITabItem): {} {
           <!-- Persist -->
           <IcBaselineSave />
         </button>
-        <button v-if="groupData.windowId" class="btn" title="Free from memory" @click="emit('discard', id)">
+        <button v-if="extendedActions && groupData.windowId" class="btn" title="Free from memory" @click="emit('discard', id)">
           <!-- Free tab from memory -->
           <MaterialSymbolsMemoryAltOutlineRounded />
         </button>

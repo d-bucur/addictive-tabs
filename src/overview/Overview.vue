@@ -7,8 +7,10 @@ const bookmarkRootId = ref('-1')
 let groupData: Groups // TODO refactor name
 let changeHandlers: StateChangeHandler
 const loadingReady = ref(false)
+const extendedActions = ref(true)
 
 onMounted(async () => {
+  extendedActions.value = (await browser.storage.local.get('extendedActions')).extendedActions ?? true
   const bmRootResp = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' }))
   bookmarkRootId.value = bmRootResp
 //  console.log('bookmarkRootId', bookmarkRootId.value)
@@ -64,6 +66,7 @@ function cleanup() {
         :key="k"
         :group-data="groupData.groups.open[k]"
         :type="ListTypeEnum.Open"
+        :extended-actions="extendedActions"
         @bind="groupData.handleBind"
         @persist="groupData.handlePersist"
         @restore="groupData.handleRestore"
@@ -86,6 +89,7 @@ function cleanup() {
         :key="k"
         :group-data="groupData.groups.archived[k]"
         :type="ListTypeEnum.Archived"
+        :extended-actions="extendedActions"
         @bind="groupData.handleBind"
         @persist="groupData.handlePersist"
         @restore="groupData.handleRestore"
