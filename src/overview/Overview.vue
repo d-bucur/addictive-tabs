@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { StateChangeHandler } from '~/logic/changeHandlers'
 import { Groups } from '~/logic/groups'
+import { openOverviewPage } from '~/logic/utils'
 import { ListTypeEnum } from '~/logic/groupUtils'
 
 const bookmarkRootId = ref('-1')
@@ -25,10 +26,6 @@ watch(bookmarkRootId, async (val, _old) => {
   cleanup()
   await init()
 })
-
-function openOverviewPage() {
-  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
-}
 
 async function init() {
   groupData = new Groups(bookmarkRootId.value)

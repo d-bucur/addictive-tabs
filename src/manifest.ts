@@ -46,6 +46,7 @@ export async function getManifest() {
       'storage',
       'activeTab',
       'tabGroups',
+      'commands',
     ],
     host_permissions: ['*://*/*'],
     content_security_policy: {
@@ -53,6 +54,12 @@ export async function getManifest() {
         // this is required on dev for Vite script to load
         ? `script-src \'self\' http://localhost:${port}; object-src \'self\'`
         : 'script-src \'self\'; object-src \'self\'',
+    },
+    commands: {
+      openOverview: {
+        suggested_key: 'Alt+A',
+        description: 'Open overview in full page',
+      },
     },
   }
 

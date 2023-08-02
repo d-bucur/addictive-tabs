@@ -12,11 +12,12 @@ watchEffect(() => {
 <template>
   <main>
     <fieldset>
-      <legend>Options (more customization coming soon)</legend>
+      <legend><h1><b>Options</b></h1></legend>
       <div>
         <input id="extendedActions" v-model="extendedActions" type="checkbox" name="extendedActions">
         <label for="extendedActions">Extended actions</label>
       </div>
     </fieldset>
+    More customization coming soon
   </main>
 </template>

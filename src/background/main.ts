@@ -1,4 +1,4 @@
-// import 'webextension-polyfill'
+import { openOverviewPage } from '~/logic/utils'
 
 // only on dev mode
 if (import.meta.hot) {
@@ -55,4 +55,10 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // @ts-expect-error: sendResponse accepts params
   (async () => sendResponse(await getBookmarkRootId()))()
   return true
+})
+
+browser.commands.onCommand.addListener((command) => {
+  if (command === 'openOverview')
+    openOverviewPage()
+  // console.log(`Command "${command}" triggered`)
 })

@@ -35,3 +35,7 @@ export function getViewType(): string {
     return 'tab'
   return 'sidebar'
 }
+
+export function openOverviewPage() {
+  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
+}

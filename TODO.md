@@ -3,7 +3,6 @@
 ## first release (can release to store and use personally)
 - check all operations
 - revise css and better colors
-- add full view key shortcut
 
 ## post release
 - bug: sometimes favicons don't update properly until extension is reloaded
