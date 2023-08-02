@@ -7,9 +7,9 @@
 - bug: sometimes favicons don't update properly until extension is reloaded
 - add full view key shortcut
 - fix options page
-- scrollable folder selection with max width
 
 ## post release
+- scrollable folder selection with max width
 - dark mode broken
 - bindings do not persist between browser reloads as windows change ids
 - make it clearer which tabs are discarded

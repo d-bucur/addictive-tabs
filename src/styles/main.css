@@ -121,6 +121,7 @@ html {
 .btn-group button {
   border-radius: 0;
 }
+
 .btn-group button:not(:last-child) {
   border-right: var(--fieldBorderWidth) solid var(--c-border);
 }
@@ -137,7 +138,7 @@ html {
   }
 }
 
-@media(prefers-color-scheme: dark) {
+/* @media(prefers-color-scheme: dark) {
   :root {
     --c-border: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.1);
     --c-overlay: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.07);
@@ -146,5 +147,5 @@ html {
     --c-bodyDimmed: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.5);
     --c-fieldBorder: var(--c-grey6);
     --c-buttonBg: var(--c-grey6);
-  }
+  } */
 }
