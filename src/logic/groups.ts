@@ -129,6 +129,8 @@ export class Groups {
   async createGroupFromBookmark(bmId: string) {
     // using separate queries because API returns empty children if bm folder just created
     const bm = (await browser.bookmarks.get(bmId))[0]
+    if (bm.parentId !== this.bookmarkRootId)
+      return
     bm.children = await browser.bookmarks.getChildren(bmId)
     // console.log('refreshing bookmark', bm)
     this.groups.archived[bmId] = makeGroupFromBm(bm)
@@ -184,7 +186,7 @@ export class Groups {
     delete this.bindings.windowToBookmark[winId]
     this.saveState()
     delete this.groups.open[winId].bookmarkId
-    this.createGroupFromBookmark(bmId)
+    await this.createGroupFromBookmark(bmId)
   // await refreshGroups()
   }
 
@@ -207,11 +209,11 @@ export class Groups {
     }
   }
 
-  handleClose = async (winId: string, type: ListTypeEnum) => {
+  handleClose = async (winId: string, _type: ListTypeEnum) => {
     await this.closeWindow(winId)
   }
 
-  handleDiscard = async (winId: string, type: ListTypeEnum) => {
+  handleDiscard = async (winId: string, _type: ListTypeEnum) => {
     const windows = this.groups.open[winId].tabs.map(t => parseInt(t.id))
     windows.map(w => browser.tabs.discard(w).catch(e => console.log('Error discarding tab', e)))
   }
