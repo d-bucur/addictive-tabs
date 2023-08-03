@@ -5,10 +5,10 @@
 - dark mode support
 - bug: sometimes favicons don't update properly until extension is reloaded
 - single button for bind and persist (or make it an alternative to archive that doesn't close)
-- scrollable folder selection with max width
 - bindings should be saved to localstorage ASAP instead of on close
 - bindings do not persist between browser reloads as windows change ids
 - make it clearer which tabs are discarded from memory
+- don't discard active tab
 - chrome groups support: one level of bm folder nesting maps to group. optional groups permission
 - move ownership of groups to background script so updates can happen in the bg. still needed?
 - changing bookmark root redraws whole page. Should avoid flickering

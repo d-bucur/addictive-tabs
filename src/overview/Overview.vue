@@ -141,6 +141,7 @@ function cleanup() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  overflow: scroll;
 }
 
 @media (min-width: 800px) {
