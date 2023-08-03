@@ -191,7 +191,6 @@ export class Groups {
   }
 
   handleArchive = async (winId: string) => {
-  // maybe not great idea to call handlers directly?
     if (!this.bindings.windowToBookmark[winId])
       await this.handleBind(winId)
     await this.handlePersist(winId)
@@ -201,11 +200,13 @@ export class Groups {
   handleRemove = async (groupId: string, type: ListTypeEnum) => {
     const selectedGroup = this.selectGroup(type)
     const group = selectedGroup[groupId]
-    if (group.windowId)
-      await this.closeWindow(groupId)
     if (group.bookmarkId) {
       await browser.bookmarks.removeTree(group.bookmarkId)
       delete selectedGroup[group.bookmarkId]
+    }
+    if (group.windowId) {
+      delete this.bindings.windowToBookmark[group.windowId]
+      await this.closeWindow(groupId)
     }
   }
 

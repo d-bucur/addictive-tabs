@@ -1,43 +1,42 @@
 ## wip
 
-## first release (can release to store and use personally)
-- check all operations
-- revise css and better colors
-
 ## post release
+- revise css and better colors
+- dark mode support
 - bug: sometimes favicons don't update properly until extension is reloaded
-- bindings should be saved to localstorage ASAP instead of on close
+- single button for bind and persist (or make it an alternative to archive that doesn't close)
 - scrollable folder selection with max width
-- dark mode broken
+- bindings should be saved to localstorage ASAP instead of on close
 - bindings do not persist between browser reloads as windows change ids
 - make it clearer which tabs are discarded
 - chrome groups support: one level of bm folder nesting maps to group. optional groups permission
-- first time configuration: root bm and later persist method (bm vs localstorage)
-- move ownership of groups to background script so updated can happen in the bg?
+- move ownership of groups to background script so updates can happen in the bg. still needed?
 - changing bookmark root redraws whole page. Should avoid flickering
-- auto sync (needs details)
-- abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
+- auto sync (needs more details)
 - icon for which tabs have changed compared to bookmark. removed items show greyed out
 - firefox port when manifest 3 is ready https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
-- masonry grid for groups. or wait for grid implementation
 
 ## nice to have
 - custom window names do not persist on reload
+- ability to change root bookmark folder
 - chrome.tabGroups ts types not working
 - click individual tabs to go to them
 - drag & drop functionality
 - order windows by last used
-- save tab history to localstorage
+- save tab history locally
 - hover over item to see address
 - toggle mode that shows address under tab titles
 - search bar
-- move current window into existing bookmark?
+- move current window into existing bookmark group?
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
+- abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
+- masonry grid for groups. or wait for grid implementation
   
 ## component libraries/ui helpers
 - https://every-layout.dev/rudiments/modular-scale/
 - https://hihayk.github.io/shaper
+- https://open-props.style/
 - https://shoelace.style/
 - https://headlessui.com/
 - https://tailwindui.com/
@@ -55,5 +54,5 @@
 - persist: ok
 - archive: ok
 - restore: ok
-- delete: bounded window leaves bookmarked group
+- delete: ok
 - rename: ok
