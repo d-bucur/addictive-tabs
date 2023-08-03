@@ -8,6 +8,7 @@
 - bindings should be saved to localstorage ASAP instead of on close
 - bindings do not persist between browser reloads as windows change ids
 - make it clearer which tabs are discarded from memory
+- make links in group clickable
 - don't discard active tab
 - chrome groups support: one level of bm folder nesting maps to group. optional groups permission
 - move ownership of groups to background script so updates can happen in the bg. still needed?
@@ -15,6 +16,7 @@
 - auto sync (needs more details)
 - icon for which tabs have changed compared to bookmark. removed items show greyed out
 - firefox port when manifest 3 is ready https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Build_a_cross_browser_extension
+- style icon (not visible on dark themes)
 
 ## nice to have
 - custom window names do not persist on reload

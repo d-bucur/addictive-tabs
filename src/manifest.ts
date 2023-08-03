@@ -43,11 +43,9 @@ export async function getManifest() {
       'tabs',
       'bookmarks',
       'storage',
-      'activeTab',
       'tabGroups',
       'commands',
     ],
-    host_permissions: ['*://*/*'],
     content_security_policy: {
       extension_pages: isDev
         // this is required on dev for Vite script to load
