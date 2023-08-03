@@ -8,7 +8,7 @@
 - scrollable folder selection with max width
 - bindings should be saved to localstorage ASAP instead of on close
 - bindings do not persist between browser reloads as windows change ids
-- make it clearer which tabs are discarded
+- make it clearer which tabs are discarded from memory
 - chrome groups support: one level of bm folder nesting maps to group. optional groups permission
 - move ownership of groups to background script so updates can happen in the bg. still needed?
 - changing bookmark root redraws whole page. Should avoid flickering

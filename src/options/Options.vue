@@ -17,6 +17,9 @@ watchEffect(() => {
         <input id="extendedActions" v-model="extendedActions" type="checkbox" name="extendedActions">
         <label for="extendedActions">Extended actions</label>
       </div>
+      <div>
+        Keyboard shortcut: Alt + A
+      </div>
     </fieldset>
     More customization coming soon
   </main>
