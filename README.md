@@ -2,6 +2,8 @@
 
 [Download (Chrome Store)](https://chrome.google.com/webstore/detail/addictive-tabs/cikplcdpjhhbhbkliobodliiknpdhaja)
 
+![screenshot](https://lh3.googleusercontent.com/lfTVjpOx3gOr29w7PJapTr4a65URgmncZ-tQjurcVlxfJmsydWN1C1juIC1pt2MKzmIDa6bZtcp8z2izOJYUvLqQMQ=w640-h400-e365-rj-sc0x00ffffff)
+
 Do you constantly find yourself with a bazillion tabs opened at a time?
 
 Break up your tabs into different windows. Put aside the ones you're not actively using so you can focus on your current task. Easily reopen archived windows and pick up where you left off.
