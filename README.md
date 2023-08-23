@@ -6,7 +6,7 @@
 
 Do you constantly find yourself with a bazillion tabs opened at a time?
 
-Break up your tabs into different windows. Put aside the ones you're not actively using so you can focus on your current task. Easily reopen archived windows and pick up where you left off.
+Break up your tabs into different windows. Put aside the ones you're not actively using so you can focus on your current task and save some battery life. Easily reopen archived windows and pick up where you left off.
 
 Archived tabs are saved as bookmarks so you can easily manage them and sync them between devices.
 
@@ -40,6 +40,10 @@ pnpm pack:zip
 ```
 
 Creates a zip of the extension that is ready to be uploaded to the Chrome store
+
+## Privacy
+
+See the full [Privacy policy](PRIVACY.md). TLDR: no data is collected at all
 
 
 ## Credits
