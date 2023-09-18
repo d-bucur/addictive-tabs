@@ -9,6 +9,7 @@ export class StateChangeHandler {
     this.groups = groups
   }
 
+  // TODO use this parameters instead of arrow functions? https://www.typescriptlang.org/docs/handbook/2/classes.html#this-parameters
   handleTabOnUpdate = (tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab) => {
     const skipUpdate = isIgnoredTab(tab)
     // normally 4 updates are sent per page load, but removing some feels like premature optimization

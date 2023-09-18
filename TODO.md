@@ -35,6 +35,8 @@
 - chrome.tabGroups ts types not working
 - drag & drop functionality
 - save tab history locally
+- button to open group folder in bookmarks
+- select and delete multiple tabs
 - hover over item to see address
 - toggle mode that shows address under tab titles
 - search bar
@@ -42,7 +44,7 @@
 - add context menu on right click. tried https://stackoverflow.com/a/26760703/3510803 but didn't work 
 - button for group emoticon?
 - abstract bookmarks as persist method, provide other storage types. Alternative can be localstorage
-- masonry grid for groups. or wait for grid implementation
+- masonry grid for groups. or wait for grid implementation. https://css-tricks.com/piecing-together-approaches-for-a-css-masonry-layout/
 - removing existing bookmarks and re-adding might increase ids. is this a problem? could be solved by diffing current window vs archived one
   
 ## component libraries/ui helpers

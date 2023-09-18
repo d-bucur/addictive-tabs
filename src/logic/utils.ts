@@ -25,17 +25,6 @@ export function faviconURL(u: string | undefined): string {
   return url.toString()
 }
 
-export function getViewType(): string {
-  // TODO might return wrong type if multiple tabs opened with different sizes
-  const popups = browser.extension.getViews({ type: 'popup' })
-  if (popups[0] && popups[0].innerWidth === window.innerWidth && popups[0].innerHeight === window.innerHeight)
-    return 'popup'
-  const tabs = browser.extension.getViews({ type: 'tab' })
-  if (tabs[0] && tabs[0].innerWidth === window.innerWidth && tabs[0].innerHeight === window.innerHeight)
-    return 'tab'
-  return 'sidebar'
-}
-
 export function openOverviewPage() {
-  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html') })
+  browser.tabs.create({ url: browser.runtime.getURL('/dist/overview/index.html?entry=main') })
 }

@@ -14,7 +14,7 @@ onMounted(async () => {
   extendedActions.value = (await browser.storage.local.get('extendedActions')).extendedActions ?? true
   const bmRootResp = (await browser.runtime.sendMessage({ method: 'get-bookmarks-root' }))
   bookmarkRootId.value = bmRootResp
-//  console.log('bookmarkRootId', bookmarkRootId.value)
+  handleEntryPoint()
 })
 
 onUnmounted(() => {
@@ -40,6 +40,12 @@ function cleanup() {
   // console.log('Unmounting, saving state')
   groupData?.saveState()
   changeHandlers?.removeStateChangeHandlers()
+}
+
+function handleEntryPoint() {
+  const entry = new URLSearchParams(window.location.search).get('entry')
+  if (entry === 'popup')
+    document.documentElement.style.setProperty('--app-min-width', '690px')
 }
 </script>
 

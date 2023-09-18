@@ -1,5 +1,5 @@
 :root {
-  --app-min-width: 700px; /*  TODO not really used any more */
+  --app-min-width: 20px;
 
   /* created with https://hihayk.github.io/shaper */
   /* TYPOGRAPHY */
@@ -131,13 +131,6 @@ html {
   color: var(--c-body);
 }
 
-/* for sidebar */
-@media (max-width: 500px) {
-  :root {
-    --app-min-width: 1px !important;
-  }
-}
-
 /* @media(prefers-color-scheme: dark) {
   :root {
     --c-border: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.1);
@@ -147,5 +140,5 @@ html {
     --c-bodyDimmed: hsla(var(--greyH), var(--greyS), var(--grey1L), 0.5);
     --c-fieldBorder: var(--c-grey6);
     --c-buttonBg: var(--c-grey6);
-  } */
-}
+  }
+} */
