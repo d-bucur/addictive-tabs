@@ -1,7 +1,6 @@
 ## wip
 
 ## next version
-- popup borked in last version of chrome
 - single button for bind and persist (or make it an alternative to archive that doesn't close)
 - each group should have active tab selected
 - order windows by last used (or at least selected window should be first)

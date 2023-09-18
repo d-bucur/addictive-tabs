@@ -38,7 +38,7 @@ Your currently opened windows and tabs will be displayed at the top and any arch
 > The actions will be somewhat simplified in a future release
 
 ### Bookmark folder
-You can select between different bookmark groups where windows will be saved to. You can also manage the saved windows and the top level categories inside the Chrome bookmarks manager (click the first button to open it up to the root folder).
+You can select between different bookmark groups where windows will be saved to. You can also manage the saved windows and the top level categories inside the Chrome bookmarks manager (click the first button to open it up to the root folder). This is by default inside the `Other bookmarks > Addictive Tabs` folder
 
 This allows for powerful management provided natively in the browser. And syncing between devices. You can now even view and manage your archived tabs on Chrome mobile, which doesn't allow extensions.
 
